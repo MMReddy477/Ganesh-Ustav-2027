@@ -1,0 +1,12 @@
+"use client";
+
+import { createBrowserClient } from "@supabase/ssr";
+
+export function createClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) throw new Error("Supabase is not configured. Please contact the administrator.");
+  return createBrowserClient(url, key, {
+    cookieOptions: { secure: process.env.NODE_ENV === "production" },
+  });
+}
