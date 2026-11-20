@@ -25,7 +25,6 @@ const configs: Record<AdminModuleName, Config> = {
     fields: [
       { key: "donor_name", label: "Donor name", required: true }, { key: "donor_phone", label: "Mobile number", kind: "tel", required: true },
       { key: "plot_flat", label: "Plot / flat" },
-      { key: "transaction_reference", label: "Transaction reference" },
       { key: "amount", label: "Amount (INR)", kind: "number", required: true },
       { key: "payment_status", label: "Payment status", kind: "select", options: ["received", "pending"], required: true, defaultValue: "received" },
       { key: "received_at", label: "Donation date", kind: "datetime-local" },
