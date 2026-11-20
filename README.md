@@ -41,7 +41,34 @@ Set `NEXT_PUBLIC_SITE_URL` to the canonical HTTPS origin in production; receipt 
 - Either `TWILIO_SMS_FROM` or `TWILIO_MESSAGING_SERVICE_SID`
 - `SUPABASE_SERVICE_ROLE_KEY` for the server-only, Twilio-signature-validated delivery callback
 
-The WhatsApp Content Template must be approved by WhatsApp and contain four variables in this order: certificate PNG URL, donor name, receipt number, and verification page URL. SMS sends the Ganapati Bappa Morya acknowledgement with donor name, amount, and receipt number; SMS is text-only, while the certificate PNG is sent through WhatsApp or downloaded/shared from the admin page. Donations marked Pending do not trigger either channel; changing a donation to Received triggers delivery. The admin receipt dashboard records provider acceptance, then updates delivery status from Twilio's signed callbacks; failed channels can be retried or explicitly resent. The Supabase service-role key is used only by the callback route and must remain server-only. Delivery cannot occur until Twilio credentials, sender settings, the approved WhatsApp template, and callback configuration are set.
+The approved WhatsApp Content Template must attach the certificate PNG as its media header and use five variables in this order: certificate PNG URL, donor name, formatted amount, receipt number, and donation date. Configure its body as:
+
+```text
+🕉️ SURYODAYA COLONY GANESH UTSAV 🕉️
+
+🙏 Ganapati Bappa Morya 🙏
+
+Dear {{2}},
+
+With heartfelt gratitude, we acknowledge your generous contribution of:
+
+💰 ₹{{3}}
+
+📄 Receipt No: {{4}}
+📅 Date: {{5}}
+
+Your support helps make our community celebration, cultural programs, prasadam distribution, and spiritual activities a grand success.
+
+📎 Your Donation Certificate is attached.
+
+✨ One Community • 4th Year Celebration ✨
+
+Thank you for being part of our tradition and togetherness.
+
+🙏 Ganapati Bappa Morya, Mangal Murti Morya 🙏
+```
+
+SMS sends the separate Ganapati Bappa Morya acknowledgement with donor name, amount, and receipt number; SMS is text-only. Donations marked Pending do not trigger either channel; changing a donation to Received triggers delivery. The admin receipt controls can download or share the certificate PNG. Delivery status is recorded from Twilio's signed callbacks; failed channels can be retried or explicitly resent. The Supabase service-role key is used only by the callback route and must remain server-only. Delivery cannot occur until Twilio credentials, sender settings, the approved WhatsApp template, and callback configuration are set.
 
 Each received donation gets a sequential receipt number such as `SGU/DON/2027/00001` and a separate random verification token. Applying the migration renumbers older receipts and invalidates their existing links. Keep new tokenized receipt links private: receipt numbers alone cannot expose donation data. The public `/receipt/{receipt_no}?token=...` page shows a premium 1080 × 1350 PNG certificate, QR verification, and PNG/PDF downloads. Mobile number and transaction reference remain private. Public verification uses a restricted database function; anonymous users cannot read donation rows directly.
 

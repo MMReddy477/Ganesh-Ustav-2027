@@ -12,6 +12,7 @@ type DonationDeliveryRecord = {
   donor_name: string | null;
   donor_phone: string | null;
   amount: number;
+  received_at: string;
   payment_status: string;
   whatsapp_sent: boolean;
   sms_sent: boolean;
@@ -39,6 +40,7 @@ export async function deliverDonationReceipt(
     donorName: donation.donor_name || "Community supporter",
     phone: donation.donor_phone || "",
     amount: Number(donation.amount),
+    receivedAt: donation.received_at,
     receiptNo: donation.receipt_no,
     receiptUrl: publicUrl,
     receiptPngUrl: pngUrl,

@@ -24,6 +24,15 @@ export type ReceiptChannelResult = {
   errorCode: string | null;
 };
 
+function formatWhatsAppReceiptDate(value: string) {
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+    timeZone: "Asia/Kolkata",
+  }).format(new Date(value));
+}
+
 export function normalizeDonationPhone(phone: string) {
   const trimmed = phone.trim();
   const digits = trimmed.replace(/\D/g, "");
@@ -62,6 +71,7 @@ async function sendTwilioMessage(
     donorName: string;
     phone: string;
     amount: number;
+    receivedAt: string;
     receiptNo: string;
     receiptUrl: string;
     receiptPngUrl: string | null;
@@ -92,8 +102,9 @@ async function sendTwilioMessage(
       message.set("ContentVariables", JSON.stringify({
         "1": input.receiptPngUrl,
         "2": input.donorName,
-        "3": input.receiptNo,
-        "4": input.receiptUrl,
+        "3": input.amount.toLocaleString("en-IN", { maximumFractionDigits: 2 }),
+        "4": input.receiptNo,
+        "5": formatWhatsAppReceiptDate(input.receivedAt),
       }));
     } else {
       const messagingServiceSid = process.env.TWILIO_MESSAGING_SERVICE_SID?.trim();
@@ -171,6 +182,7 @@ export async function sendDonationReceiptMessages(input: {
   donorName: string;
   phone: string;
   amount: number;
+  receivedAt: string;
   receiptNo: string;
   receiptUrl: string | null;
   receiptPngUrl: string | null;
