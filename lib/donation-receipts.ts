@@ -106,10 +106,21 @@ async function sendTwilioMessage(
         return { sent: false, status: "not_configured", messageSid: null, errorCode: null };
       }
       message.set("To", phone);
-      message.set(
-        "Body",
-        `Thank you! INR ${input.amount.toLocaleString("en-IN")} received. Receipt ${input.receiptNo}: ${input.receiptUrl}`,
-      );
+      message.set("Body", [
+        "🙏 Ganapati Bappa Morya 🙏",
+        "",
+        `Dear ${input.donorName},`,
+        "",
+        `We have received your contribution of ₹${input.amount.toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 2 })} towards Suryodaya Colony Ganesh Utsav.`,
+        "",
+        `Receipt No: ${input.receiptNo}`,
+        "",
+        "Thank you for strengthening our community celebration.",
+        "",
+        "One Community • 4th Year Celebration",
+        "",
+        "- Suryodaya Colony Ganesh Utsav Committee",
+      ].join("\n"));
     }
     const statusCallbackUrl = getTwilioStatusCallbackUrl(channel);
     if (statusCallbackUrl) message.set("StatusCallback", statusCallbackUrl);
