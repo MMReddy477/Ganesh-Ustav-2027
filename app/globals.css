@@ -69,12 +69,6 @@ main { display: flex; flex-direction: column; }
   .certificate-verification dl { grid-template-columns: 1fr; }
   .certificate-download-actions a { flex: 1 1 130px; }
 }
-.donation-admin-actions { min-width: 240px; }
-.donation-receipt-actions { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
-.donation-receipt-actions a, .donation-receipt-actions button { min-height: 28px; padding: 4px 7px; border: 1px solid #6b542e; border-radius: 5px; background: #21180f; color: #f3d996; font: inherit; font-size: 10px; text-decoration: none; white-space: nowrap; cursor: pointer; }
-.donation-receipt-actions a:hover, .donation-receipt-actions button:hover:not(:disabled) { background: #392816; }
-.donation-receipt-actions button:disabled { opacity: .6; cursor: wait; }
-.donation-receipt-actions a:focus-visible, .donation-receipt-actions button:focus-visible { outline: 2px solid #d6aa47; outline-offset: 2px; }
 ::selection { color: #fff; background: var(--red); }
 a { color: inherit; text-decoration: none; }
 button, input, select { font: inherit; }

@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Download, FileSpreadsheet, Film, ImagePlus, Images, LoaderCircle, Music, Plus, Save, Trash2, Upload, Video, X } from "lucide-react";
+import { ArrowLeft, Download, Eye, FileSpreadsheet, FileText, Film, Image as ImageIcon, ImagePlus, Images, LoaderCircle, Music, Pencil, Plus, RotateCcw, Save, Share2, Trash2, Upload, Video, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -171,18 +171,6 @@ function escapeCsv(value: unknown) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
-function deliveryStatusLabel(status: unknown) {
-  const labels: Record<string, string> = {
-    sent: "Sent",
-    delivered: "Delivered",
-    queued: "Queued",
-    failed: "Failed",
-    not_configured: "Not configured",
-    skipped: "Not sent",
-  };
-  return labels[String(status ?? "")] ?? "Pending";
-}
-
 function getRecordErrorMessage(error: unknown, fallback: string, table: string) {
   const message = typeof error === "object" && error !== null && "message" in error && typeof error.message === "string"
     ? error.message
@@ -259,7 +247,6 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
   const [videoCount, setVideoCount] = useState(0);
   const [audioCount, setAudioCount] = useState(0);
   const [exportingWorkbook, setExportingWorkbook] = useState(false);
-  const [receiptStats, setReceiptStats] = useState({ sent: 0, whatsapp: 0, sms: 0, failed: 0 });
   const galleryFileInputRef = useRef<HTMLInputElement>(null);
 
   const loadRecords = useCallback(async () => {
@@ -273,23 +260,6 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
       const { data, error } = await query;
       if (error) throw error;
       setRecords((data ?? []) as Row[]);
-      if (moduleName === "donations") {
-        const [sent, whatsapp, sms, failedWhatsApp, failedSms] = await Promise.all([
-          supabase.from("donations").select("id", { count: "exact", head: true }).or("whatsapp_sent.eq.true,sms_sent.eq.true"),
-          supabase.from("donations").select("id", { count: "exact", head: true }).eq("whatsapp_sent", true),
-          supabase.from("donations").select("id", { count: "exact", head: true }).eq("sms_sent", true),
-          supabase.from("donations").select("id", { count: "exact", head: true }).eq("whatsapp_status", "failed"),
-          supabase.from("donations").select("id", { count: "exact", head: true }).eq("sms_status", "failed"),
-        ]);
-        const countError = sent.error || whatsapp.error || sms.error || failedWhatsApp.error || failedSms.error;
-        if (countError) throw countError;
-        setReceiptStats({
-          sent: sent.count ?? 0,
-          whatsapp: whatsapp.count ?? 0,
-          sms: sms.count ?? 0,
-          failed: (failedWhatsApp.count ?? 0) + (failedSms.count ?? 0),
-        });
-      }
       if (moduleName === "images" || moduleName === "videos" || moduleName === "audios") {
         const [photos, videos, audios] = await Promise.all([
           supabase.from("gallery_images").select("id", { count: "exact", head: true }),
@@ -463,6 +433,35 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
     }
   }
 
+  async function shareReceiptPng(receiptNo: string, receiptToken: string) {
+    const fileName = `SGU-donation-certificate-${receiptNo.replace(/[^A-Za-z0-9-]+/g, "-")}.png`;
+    try {
+      const response = await fetch(getReceiptImagePath(receiptNo, receiptToken), { cache: "no-store" });
+      if (!response.ok) throw new Error("The certificate PNG could not be loaded.");
+      const image = await response.blob();
+      const file = new File([image], fileName, { type: "image/png" });
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ files: [file], title: "Suryodaya Colony Ganesh Utsav donation certificate" });
+        setMessage("Certificate PNG shared.");
+        return;
+      }
+
+      const imageUrl = URL.createObjectURL(image);
+      const anchor = document.createElement("a");
+      anchor.href = imageUrl;
+      anchor.download = fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(imageUrl), 1000);
+      setMessage("Certificate PNG downloaded. Attach it to WhatsApp to share.");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      console.error("Could not share donation certificate PNG:", getRecordErrorLog(error));
+      setMessage(error instanceof Error ? error.message : "The certificate PNG could not be shared.");
+    }
+  }
+
   async function uploadMultipleGalleryFiles(files: FileList | File[]) {
     const fileArray = Array.from(files);
     if (!fileArray.length) return;
@@ -538,8 +537,6 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
         ? [
           ...config.fields.filter((field) => field.key !== "show_on_wall"),
           { key: "receipt_no", label: "Receipt number" },
-          { key: "whatsapp_status", label: "WhatsApp status" },
-          { key: "sms_status", label: "SMS status" },
         ]
         : config.fields;
       let exportRecords = records;
@@ -552,7 +549,6 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
       const rows = exportRecords.map((record) => exportFields.map((field) => escapeCsv(
         field.key === "auction_type" ? auctionCategoryLabels[String(record[field.key])] ?? record[field.key]
           : field.key === "payment_status" ? (record[field.key] === "received" ? "Received" : "Yet to be received")
-            : field.key === "whatsapp_status" || field.key === "sms_status" ? deliveryStatusLabel(record[field.key])
             : field.kind === "date" && record[field.key] ? formatFestivalDate(String(record[field.key]))
               : field.kind === "time" ? formatFestivalTime(record[field.key] == null ? null : String(record[field.key]))
             : record[field.key],
@@ -733,8 +729,6 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
     ? [
       ...config.fields,
       { key: "receipt_no", label: "Receipt number" },
-      { key: "whatsapp_status", label: "WhatsApp" },
-      { key: "sms_status", label: "SMS" },
     ]
     : config.fields.filter((field) => moduleName !== "expenses" || field.key !== "spent_at_time");
   const Root = compact ? "section" : "main";
@@ -749,14 +743,6 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
       {!compact && <header className="admin-topbar"><span><Link href="/">SURYODAYA COLONY</Link> / <strong>{config.title.toUpperCase()}</strong></span><Link href="/" target="_blank" rel="noreferrer">View public site</Link></header>}
       <AdminSectionTabs active={moduleName === "auctions" ? (festivalYear === 2026 ? "auctions-2026" : "auctions-current") : moduleName} />
       {!compact && <div className="module-heading"><div><p className="eyebrow"><span className="eyebrow-line" /> COMMITTEE WORKSPACE{festivalYear ? ` · ${festivalYear} AUCTION ARCHIVE` : ""}</p><h1>{moduleName === "auctions" ? (festivalYear === 2026 ? "2026 Auction Archive" : "Prasad auctions") : config.title}</h1><p>{moduleName === "auctions" ? (festivalYear === 2026 ? "Historical Laddu, Kalasam and other auction winners from 2026." : "Manage published Laddu, Kalasam and other auction outcomes.") : config.description}</p></div><Link href="/admin" className="module-back"><ArrowLeft size={14} /> Dashboard</Link></div>}
-      {moduleName === "donations" && (
-        <section className="receipt-summary" aria-label="Donation receipt delivery summary">
-          <article><span>Total receipts sent</span><strong>{receiptStats.sent}</strong></article>
-          <article><span>WhatsApp sent</span><strong>{receiptStats.whatsapp}</strong></article>
-          <article><span>SMS sent</span><strong>{receiptStats.sms}</strong></article>
-          <article className={receiptStats.failed ? "has-failures" : ""}><span>Failed deliveries</span><strong>{receiptStats.failed}</strong></article>
-        </section>
-      )}
       <div className="module-toolbar">
         <input aria-label={`Search ${config.title}`} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search records…" />
         {moduleName === "donations" && <button type="button" onClick={() => void exportFinanceWorkbook()} disabled={exportingWorkbook}><FileSpreadsheet size={15} /> {exportingWorkbook ? "Preparing Excel…" : "Export Excel"}</button>}
@@ -893,8 +879,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
                           {field.key === "receipt_no" && record[field.key] ? record.payment_status === "received" && typeof record.receipt_token === "string"
                             ? <a href={getReceiptPath(String(record[field.key]), record.receipt_token)} target="_blank" rel="noreferrer">{String(record[field.key])} ↗</a>
                             : String(record[field.key])
-                            : field.key === "whatsapp_status" || field.key === "sms_status" ? <span className={`delivery-status-badge is-${String(record[field.key] ?? "pending")}`}>{deliveryStatusLabel(record[field.key])}</span>
-                          : field.key === "payment_status" ? <span className={`payment-status-badge ${record[field.key] === "received" ? "is-received" : "is-pending"}`}>{paymentStatusLabels[String(record[field.key])] ?? "—"}</span>
+                            : field.key === "payment_status" ? <span className={`payment-status-badge ${record[field.key] === "received" ? "is-received" : "is-pending"}`}>{paymentStatusLabels[String(record[field.key])] ?? "—"}</span>
                             : field.key === "auction_type" ? (auctionCategoryLabels[String(record[field.key])] ?? "—")
                               : moduleName === "expenses" && field.key === "spent_at" && record.spent_at ? `${formatFestivalDate(String(record.spent_at))} ${formatFestivalTime(record.spent_at_time == null ? null : String(record.spent_at_time))}`
                                 : field.kind === "date" && record[field.key] ? formatFestivalDate(String(record[field.key]))
@@ -906,6 +891,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
                       </td>
                     ))}
                     <td className={moduleName === "donations" ? "donation-admin-actions" : undefined}>
+                      <div className="module-table-actions">
                       {moduleName === "donations" && record.payment_status === "received" && typeof record.receipt_no === "string" && typeof record.receipt_token === "string" && (() => {
                         const receiptNo = String(record.receipt_no);
                         const receiptToken = String(record.receipt_token);
@@ -914,19 +900,18 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
                         const pdfPath = getReceiptPdfPath(receiptNo, receiptToken);
                         const downloadName = `SGU-donation-certificate-${receiptNo.replace(/[^A-Za-z0-9-]+/g, "-")}`;
                         return (
-                          <div className="donation-receipt-actions">
-                            <a href={receiptPath} target="_blank" rel="noreferrer">View receipt</a>
-                            <a href={imagePath} download={`${downloadName}.png`}>Download PNG</a>
-                            <a href={pdfPath} download={`${downloadName}.pdf`}>Download PDF</a>
-                            <button type="button" onClick={() => {
-                              const shareUrl = new URL(receiptPath, window.location.origin).toString();
-                              window.open(`https://wa.me/?text=${encodeURIComponent(`Donation certificate: ${shareUrl}`)}`, "_blank", "noopener,noreferrer");
-                            }}>Share WhatsApp</button>
-                            <button type="button" onClick={() => void retryReceiptDelivery(record)} disabled={saving}>Re-send receipt</button>
-                          </div>
+                          <>
+                            <a className="table-icon-action" href={receiptPath} target="_blank" rel="noreferrer" aria-label="View receipt" title="View receipt"><Eye size={14} /></a>
+                            <a className="table-icon-action" href={imagePath} download={`${downloadName}.png`} aria-label="Download certificate PNG" title="Download PNG"><ImageIcon size={14} /></a>
+                            <a className="table-icon-action" href={pdfPath} download={`${downloadName}.pdf`} aria-label="Download certificate PDF" title="Download PDF"><FileText size={14} /></a>
+                            <button className="table-icon-action" type="button" onClick={() => void shareReceiptPng(receiptNo, receiptToken)} aria-label="Share certificate PNG" title="Share PNG image"><Share2 size={14} /></button>
+                            <button className="table-icon-action" type="button" onClick={() => void retryReceiptDelivery(record)} disabled={saving} aria-label="Re-send receipt" title="Re-send receipt"><RotateCcw size={14} /></button>
+                          </>
                         );
                       })()}
-                      <button type="button" onClick={() => startEdit(record)}>Edit</button><button type="button" className="module-delete" onClick={() => void deleteRecord(record)} aria-label={`Delete ${config.title} record`}><Trash2 size={14} /></button>
+                      <button className="table-icon-action" type="button" onClick={() => startEdit(record)} aria-label={`Edit ${config.title} record`} title="Edit"><Pencil size={14} /></button>
+                      <button type="button" className="table-icon-action module-delete" onClick={() => void deleteRecord(record)} aria-label={`Delete ${config.title} record`} title="Delete"><Trash2 size={14} /></button>
+                      </div>
                     </td>
                   </tr>
                 ))}
