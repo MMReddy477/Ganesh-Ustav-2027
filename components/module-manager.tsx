@@ -725,10 +725,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
 
   const filteredRecords = records.filter((record) => config.fields.some((field) => String(record[field.key] ?? "").toLowerCase().includes(search.toLowerCase())));
   const tableFields: Field[] = moduleName === "donations"
-    ? [
-      ...config.fields.filter((field) => field.key !== "show_on_wall" && field.key !== "notes"),
-      { key: "receipt_no", label: "Receipt number" },
-    ]
+    ? config.fields.filter((field) => field.key !== "show_on_wall" && field.key !== "notes")
     : config.fields.filter((field) => moduleName !== "expenses" || field.key !== "spent_at_time");
   const Root = compact ? "section" : "main";
   const paymentStatusLabels: Record<string, string> = { received: "Received", pending: "Yet to be received" };
