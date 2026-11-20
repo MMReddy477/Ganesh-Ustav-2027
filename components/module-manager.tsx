@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, Download, Eye, FileSpreadsheet, FileText, Film, Image as ImageIcon, ImagePlus, Images, LoaderCircle, Music, Pencil, Plus, RotateCcw, Save, Share2, Trash2, Upload, Video, X } from "lucide-react";
+import { ArrowLeft, Download, Eye, FileSpreadsheet, FileText, Film, ImagePlus, Images, LoaderCircle, Music, Pencil, Plus, RotateCcw, Save, Share2, Trash2, Upload, Video, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -727,7 +727,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
   const filteredRecords = records.filter((record) => config.fields.some((field) => String(record[field.key] ?? "").toLowerCase().includes(search.toLowerCase())));
   const tableFields: Field[] = moduleName === "donations"
     ? [
-      ...config.fields,
+      ...config.fields.filter((field) => field.key !== "show_on_wall" && field.key !== "notes"),
       { key: "receipt_no", label: "Receipt number" },
     ]
     : config.fields.filter((field) => moduleName !== "expenses" || field.key !== "spent_at_time");
@@ -902,7 +902,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
                         return (
                           <>
                             <a className="table-icon-action" href={receiptPath} target="_blank" rel="noreferrer" aria-label="View receipt" title="View receipt"><Eye size={14} /></a>
-                            <a className="table-icon-action" href={imagePath} download={`${downloadName}.png`} aria-label="Download certificate PNG" title="Download PNG"><ImageIcon size={14} /></a>
+                            <a className="table-icon-action" href={imagePath} download={`${downloadName}.png`} aria-label="Download certificate PNG" title="Download PNG"><Download size={14} /></a>
                             <a className="table-icon-action" href={pdfPath} download={`${downloadName}.pdf`} aria-label="Download certificate PDF" title="Download PDF"><FileText size={14} /></a>
                             <button className="table-icon-action" type="button" onClick={() => void shareReceiptPng(receiptNo, receiptToken)} aria-label="Share certificate PNG" title="Share PNG image"><Share2 size={14} /></button>
                             <button className="table-icon-action" type="button" onClick={() => void retryReceiptDelivery(record)} disabled={saving} aria-label="Re-send receipt" title="Re-send receipt"><RotateCcw size={14} /></button>
