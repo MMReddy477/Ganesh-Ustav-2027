@@ -3,6 +3,23 @@ create extension if not exists pgcrypto;
 create type public.committee_role as enum ('super_admin', 'admin', 'editor');
 create type public.volunteer_status as enum ('pending', 'approved', 'declined');
 
+create sequence public.donation_receipt_sequence;
+
+create or replace function public.generate_donation_receipt_no()
+returns text
+language sql
+volatile
+security definer
+set search_path = ''
+as $$
+  select 'SGU/DON/2027/'
+    || case
+      when next_number < 100000 then lpad(next_number::text, 5, '0')
+      else next_number::text
+    end
+  from (select nextval('public.donation_receipt_sequence'::regclass) as next_number) sequence_value;
+$$;
+
 create table public.users (
   id uuid primary key references auth.users (id) on delete cascade,
   email text not null,
@@ -91,7 +108,18 @@ create table public.donations (
   currency char(3) not null default 'INR',
   payment_method text not null default 'UPI',
   transaction_reference text,
+  receipt_no text not null unique default public.generate_donation_receipt_no(),
+  receipt_token text not null unique default encode(gen_random_bytes(32), 'hex'),
   receipt_url text,
+  whatsapp_sent boolean not null default false,
+  sms_sent boolean not null default false,
+  sent_at timestamptz,
+  whatsapp_status text not null default 'not_configured',
+  sms_status text not null default 'not_configured',
+  whatsapp_message_sid text,
+  sms_message_sid text,
+  whatsapp_error_code text,
+  sms_error_code text,
   show_on_wall boolean not null default false,
   received_at timestamptz not null default now(),
   notes text,
@@ -403,6 +431,38 @@ as $$
   limit 12;
 $$;
 
+drop function if exists public.public_donation_receipt(text);
+
+create or replace function public.public_donation_receipt(p_receipt_no text, p_receipt_token text)
+returns table (
+  receipt_no text,
+  donor_name text,
+  amount numeric,
+  currency text,
+  received_at timestamptz,
+  plot_flat text,
+  payment_method text
+)
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  select
+    d.receipt_no,
+    coalesce(nullif(d.donor_name, ''), 'Community donor'),
+    d.amount,
+    d.currency::text,
+    d.received_at,
+    d.plot_flat,
+    d.payment_method
+  from public.donations d
+  where d.receipt_no = p_receipt_no
+    and d.receipt_token = p_receipt_token
+    and d.payment_status = 'received'
+  limit 1;
+$$;
+
 create or replace function public.public_expense_summary()
 returns table (category text, amount numeric)
 language sql
@@ -568,6 +628,10 @@ grant select, insert on public.volunteers, public.contacts to anon, authenticate
 grant select, insert, update, delete on public.events, public.gallery_images, public.gallery_videos, public.gallery_audios, public.donations, public.expenses, public.sponsors, public.announcements, public.auction_items, public.website_settings to authenticated;
 grant execute on function public.public_festival_summary() to anon, authenticated;
 grant execute on function public.public_donation_wall() to anon, authenticated;
+revoke all on function public.generate_donation_receipt_no() from public;
+grant execute on function public.generate_donation_receipt_no() to authenticated, service_role;
+revoke all on function public.public_donation_receipt(text, text) from public;
+grant execute on function public.public_donation_receipt(text, text) to anon, authenticated;
 grant execute on function public.public_expense_summary() to anon, authenticated;
 grant execute on function public.public_expense_ledger() to anon, authenticated;
 grant execute on function public.public_auction_items() to anon, authenticated;

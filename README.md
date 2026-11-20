@@ -30,6 +30,21 @@ The public pages work without Supabase. Volunteer submissions and the admin dash
 
 The schema enables row-level security, permits only pending public volunteer applications, restricts donor/expense/volunteer details to committee admins, and records data mutations and admin login/logout/failed-login events in `audit_logs`. Failed-login audit records do not store passwords or attempted email addresses. Supabase Auth rate limits sign-in attempts; session refresh and token expiry follow the project's Auth settings.
 
+## Donation receipts and delivery
+
+For an existing database, apply `database/migrations/20261120_add_donation_receipts.sql` after the base schema and donation payment-status migration. Fresh databases receive the same receipt columns and safe public verification RPC from `database/schema.sql`.
+
+Set `NEXT_PUBLIC_SITE_URL` to the canonical HTTPS origin in production; receipt links and QR codes use this URL. To send messages, add these server-only variables in the deployment environment (never prefix provider credentials with `NEXT_PUBLIC_`):
+
+- `TWILIO_ACCOUNT_SID` and `TWILIO_AUTH_TOKEN`
+- `TWILIO_WHATSAPP_FROM` and `TWILIO_WHATSAPP_CONTENT_SID`
+- Either `TWILIO_SMS_FROM` or `TWILIO_MESSAGING_SERVICE_SID`
+- `SUPABASE_SERVICE_ROLE_KEY` for the server-only, Twilio-signature-validated delivery callback
+
+The WhatsApp Content Template must be approved by WhatsApp and contain four variables in this order: certificate PNG URL, donor name, receipt number, and verification page URL. SMS uses a short receipt confirmation and link. Donations marked Pending do not trigger either channel; changing a donation to Received triggers delivery. The admin receipt dashboard records provider acceptance, then updates delivery status from Twilio's signed callbacks; failed channels can be retried or explicitly resent. The Supabase service-role key is used only by the callback route and must remain server-only. Delivery cannot occur until Twilio credentials, sender settings, the approved WhatsApp template, and callback configuration are set.
+
+Each received donation gets a sequential receipt number such as `SGU/DON/2027/00001` and a separate random verification token. Applying the migration renumbers older receipts and invalidates their existing links. Keep new tokenized receipt links private: receipt numbers alone cannot expose donation data. The public `/receipt/{receipt_no}?token=...` page shows a premium 1080 × 1350 PNG certificate, QR verification, and PNG/PDF downloads. Mobile number and transaction reference remain private. Public verification uses a restricted database function; anonymous users cannot read donation rows directly.
+
 ## Production settings
 
 Set `NEXT_PUBLIC_SITE_URL` to the canonical HTTPS deployment URL and configure the Supabase public URL/anon key in Vercel Project Settings. Deploy from the project root; `vercel.json` pins the Next.js framework. Use Supabase storage (with suitable bucket policies) for uploaded media and set public sponsor, event and gallery records in Postgres.

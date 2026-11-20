@@ -8,9 +8,10 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, ty
 import { createClient } from "@/lib/supabase/client";
 import { AdminSectionTabs } from "@/components/admin-section-tabs";
 import { formatFestivalDate, formatFestivalDateTime, formatFestivalTime, toFestivalDateTimeLocal, toFestivalTimestamp } from "@/lib/festival-date-time";
+import { getReceiptImagePath, getReceiptPath, getReceiptPdfPath } from "@/lib/receipt-links";
 
 export type AdminModuleName = "donations" | "expenses" | "events" | "volunteers" | "images" | "videos" | "audios" | "announcements" | "sponsors" | "auctions";
-type FieldKind = "text" | "textarea" | "number" | "date" | "time" | "datetime-local" | "select" | "checkbox";
+type FieldKind = "text" | "tel" | "textarea" | "number" | "date" | "time" | "datetime-local" | "select" | "checkbox";
 type Field = { key: string; label: string; kind?: FieldKind; required?: boolean; options?: string[]; accept?: string; defaultValue?: string | number | boolean };
 type Config = { title: string; description: string; table: string; fields: Field[] };
 type Row = { id: string; [key: string]: unknown };
@@ -19,17 +20,17 @@ type FormValues = Record<string, string | number | boolean>;
 const configs: Record<AdminModuleName, Config> = {
   donations: {
     title: "Donations",
-    description: "Record contributions and choose which donors have opted in to the public thank-you wall.",
+    description: "Save donations and automatically send receipts by WhatsApp and SMS when payment is marked Received.",
     table: "donations",
     fields: [
-      { key: "donor_name", label: "Donor name" }, { key: "donor_phone", label: "Phone number" },
+      { key: "donor_name", label: "Donor name", required: true }, { key: "donor_phone", label: "Mobile number", kind: "tel", required: true },
       { key: "plot_flat", label: "Plot / flat" },
+      { key: "transaction_reference", label: "Transaction reference" },
       { key: "amount", label: "Amount (INR)", kind: "number", required: true },
       { key: "payment_status", label: "Payment status", kind: "select", options: ["received", "pending"], required: true, defaultValue: "received" },
       { key: "received_at", label: "Donation date", kind: "datetime-local" },
-      { key: "payment_method", label: "Payment method", kind: "select", options: ["UPI", "Cash", "Bank transfer", "Other"], required: true, defaultValue: "UPI" },
-      { key: "transaction_reference", label: "Transaction reference" }, { key: "receipt_url", label: "Receipt URL" },
-      { key: "show_on_wall", label: "Donor agreed to public recognition", kind: "checkbox", defaultValue: true },
+      { key: "payment_method", label: "Payment mode", kind: "select", options: ["UPI", "Cash", "Bank transfer", "Other"], required: true, defaultValue: "UPI" },
+      { key: "show_on_wall", label: "Donor agreed to public recognition", kind: "checkbox", defaultValue: false },
       { key: "notes", label: "Notes", kind: "textarea" },
     ],
   },
@@ -170,6 +171,18 @@ function escapeCsv(value: unknown) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
+function deliveryStatusLabel(status: unknown) {
+  const labels: Record<string, string> = {
+    sent: "Sent",
+    delivered: "Delivered",
+    queued: "Queued",
+    failed: "Failed",
+    not_configured: "Not configured",
+    skipped: "Not sent",
+  };
+  return labels[String(status ?? "")] ?? "Pending";
+}
+
 function getRecordErrorMessage(error: unknown, fallback: string, table: string) {
   const message = typeof error === "object" && error !== null && "message" in error && typeof error.message === "string"
     ? error.message
@@ -182,7 +195,7 @@ function getRecordErrorMessage(error: unknown, fallback: string, table: string) 
   }
   if (["PGRST204", "PGRST205", "42P01", "42703"].includes(code)) {
     if (table === "donations") {
-      return "The donation schema is incomplete. In Supabase SQL Editor, run database/migrations/20261119_add_donation_payment_status.sql, then retry. If the donations table itself is missing, run database/schema.sql first.";
+      return "The donation receipt schema is incomplete. In Supabase SQL Editor, run database/migrations/20261119_add_donation_payment_status.sql and database/migrations/20261120_add_donation_receipts.sql. If the donations table is missing, run database/schema.sql first.";
     }
     if (table === "expenses") {
       return "The expense date/time schema is incomplete. In Supabase SQL Editor, run database/migrations/20261120_add_expense_time.sql, then retry. If the expenses table is missing, run database/schema.sql first.";
@@ -246,6 +259,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
   const [videoCount, setVideoCount] = useState(0);
   const [audioCount, setAudioCount] = useState(0);
   const [exportingWorkbook, setExportingWorkbook] = useState(false);
+  const [receiptStats, setReceiptStats] = useState({ sent: 0, whatsapp: 0, sms: 0, failed: 0 });
   const galleryFileInputRef = useRef<HTMLInputElement>(null);
 
   const loadRecords = useCallback(async () => {
@@ -259,6 +273,23 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
       const { data, error } = await query;
       if (error) throw error;
       setRecords((data ?? []) as Row[]);
+      if (moduleName === "donations") {
+        const [sent, whatsapp, sms, failedWhatsApp, failedSms] = await Promise.all([
+          supabase.from("donations").select("id", { count: "exact", head: true }).or("whatsapp_sent.eq.true,sms_sent.eq.true"),
+          supabase.from("donations").select("id", { count: "exact", head: true }).eq("whatsapp_sent", true),
+          supabase.from("donations").select("id", { count: "exact", head: true }).eq("sms_sent", true),
+          supabase.from("donations").select("id", { count: "exact", head: true }).eq("whatsapp_status", "failed"),
+          supabase.from("donations").select("id", { count: "exact", head: true }).eq("sms_status", "failed"),
+        ]);
+        const countError = sent.error || whatsapp.error || sms.error || failedWhatsApp.error || failedSms.error;
+        if (countError) throw countError;
+        setReceiptStats({
+          sent: sent.count ?? 0,
+          whatsapp: whatsapp.count ?? 0,
+          sms: sms.count ?? 0,
+          failed: (failedWhatsApp.count ?? 0) + (failedSms.count ?? 0),
+        });
+      }
       if (moduleName === "images" || moduleName === "videos" || moduleName === "audios") {
         const [photos, videos, audios] = await Promise.all([
           supabase.from("gallery_images").select("id", { count: "exact", head: true }),
@@ -340,34 +371,47 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
     }
 
     try {
-      const supabase = createClient();
-      if (moduleName === "volunteers" && editing && values.status !== editing.status) {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw userError;
-        if (user) {
-          payload.reviewed_by = user.id;
-          payload.reviewed_at = new Date().toISOString();
-        }
-      }
       let savedRecord: Row;
-      if (editing) {
-        const { data, error } = await supabase.from(config.table).update(payload).eq("id", editing.id).select("*").single();
-        if (error) throw error;
-        savedRecord = data as Row;
+      if (moduleName === "donations") {
+        const response = await fetch(editing ? `/api/admin/donations/${encodeURIComponent(editing.id)}` : "/api/admin/donations", {
+          method: editing ? "PATCH" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(result?.error || "The donation could not be saved.");
+        savedRecord = result.donation as Row;
+        setMessage(result.warning || result.message || (editing ? "Donation updated." : "Donation saved."));
       } else {
-        const { data, error } = await supabase.from(config.table).insert(payload).select("*").single();
-        if (error) throw error;
-        savedRecord = data as Row;
+        const supabase = createClient();
+        if (moduleName === "volunteers" && editing && values.status !== editing.status) {
+          const { data: { user }, error: userError } = await supabase.auth.getUser();
+          if (userError) throw userError;
+          if (user) {
+            payload.reviewed_by = user.id;
+            payload.reviewed_at = new Date().toISOString();
+          }
+        }
+        if (editing) {
+          const { data, error } = await supabase.from(config.table).update(payload).eq("id", editing.id).select("*").single();
+          if (error) throw error;
+          savedRecord = data as Row;
+        } else {
+          const { data, error } = await supabase.from(config.table).insert(payload).select("*").single();
+          if (error) throw error;
+          savedRecord = data as Row;
+        }
       }
 
       setRecords((current) => editing
         ? current.map((record) => record.id === savedRecord.id ? savedRecord : record)
         : [savedRecord, ...current.filter((record) => record.id !== savedRecord.id)].slice(0, 100));
-      setMessage(editing ? "Record updated." : "Record added.");
+      if (moduleName !== "donations") setMessage(editing ? "Record updated." : "Record added.");
       setEditing(null);
       setValues({});
       setFormOpen(false);
       router.refresh();
+      if (moduleName === "donations") await loadRecords();
     } catch (error) {
       console.error(`Could not save ${config.title.toLowerCase()}:`, getRecordErrorLog(error));
       setMessage(getRecordErrorMessage(error, "The record could not be saved.", config.table));
@@ -394,6 +438,28 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
     } catch (error) {
       console.error(`Could not delete ${config.title.toLowerCase()} record:`, error);
       setMessage(getRecordErrorMessage(error, "The record could not be deleted.", config.table));
+    }
+  }
+
+  async function retryReceiptDelivery(row: Row) {
+    setSaving(true);
+    setMessage("");
+    try {
+      const response = await fetch(`/api/admin/donations/${encodeURIComponent(row.id)}/deliver`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ force: true }),
+      });
+      const result = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(result?.error || "Receipt delivery could not be retried.");
+      setRecords((current) => current.map((record) => record.id === row.id ? result.donation as Row : record));
+      setMessage(result.message || "Receipt delivery attempted.");
+      await loadRecords();
+    } catch (error) {
+      console.error("Could not retry donation receipt delivery:", getRecordErrorLog(error));
+      setMessage(error instanceof Error ? error.message : "Receipt delivery could not be retried.");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -468,7 +534,14 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
 
   async function exportCsv() {
     try {
-      const exportFields = config.fields.filter((field) => moduleName !== "donations" || !["transaction_reference", "receipt_url", "show_on_wall"].includes(field.key));
+      const exportFields = moduleName === "donations"
+        ? [
+          ...config.fields.filter((field) => field.key !== "show_on_wall"),
+          { key: "receipt_no", label: "Receipt number" },
+          { key: "whatsapp_status", label: "WhatsApp status" },
+          { key: "sms_status", label: "SMS status" },
+        ]
+        : config.fields;
       let exportRecords = records;
       if (moduleName === "donations" || moduleName === "expenses") {
         exportRecords = await fetchAllRows(createClient(), config.table);
@@ -479,6 +552,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
       const rows = exportRecords.map((record) => exportFields.map((field) => escapeCsv(
         field.key === "auction_type" ? auctionCategoryLabels[String(record[field.key])] ?? record[field.key]
           : field.key === "payment_status" ? (record[field.key] === "received" ? "Received" : "Yet to be received")
+            : field.key === "whatsapp_status" || field.key === "sms_status" ? deliveryStatusLabel(record[field.key])
             : field.kind === "date" && record[field.key] ? formatFestivalDate(String(record[field.key]))
               : field.kind === "time" ? formatFestivalTime(record[field.key] == null ? null : String(record[field.key]))
             : record[field.key],
@@ -655,7 +729,14 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
   }
 
   const filteredRecords = records.filter((record) => config.fields.some((field) => String(record[field.key] ?? "").toLowerCase().includes(search.toLowerCase())));
-  const tableFields = config.fields.filter((field) => moduleName !== "expenses" || field.key !== "spent_at_time");
+  const tableFields: Field[] = moduleName === "donations"
+    ? [
+      ...config.fields,
+      { key: "receipt_no", label: "Receipt number" },
+      { key: "whatsapp_status", label: "WhatsApp" },
+      { key: "sms_status", label: "SMS" },
+    ]
+    : config.fields.filter((field) => moduleName !== "expenses" || field.key !== "spent_at_time");
   const Root = compact ? "section" : "main";
   const paymentStatusLabels: Record<string, string> = { received: "Received", pending: "Yet to be received" };
   const isGallery = moduleName === "images" || moduleName === "videos" || moduleName === "audios";
@@ -668,6 +749,14 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
       {!compact && <header className="admin-topbar"><span><Link href="/">SURYODAYA COLONY</Link> / <strong>{config.title.toUpperCase()}</strong></span><Link href="/" target="_blank" rel="noreferrer">View public site</Link></header>}
       <AdminSectionTabs active={moduleName === "auctions" ? (festivalYear === 2026 ? "auctions-2026" : "auctions-current") : moduleName} />
       {!compact && <div className="module-heading"><div><p className="eyebrow"><span className="eyebrow-line" /> COMMITTEE WORKSPACE{festivalYear ? ` · ${festivalYear} AUCTION ARCHIVE` : ""}</p><h1>{moduleName === "auctions" ? (festivalYear === 2026 ? "2026 Auction Archive" : "Prasad auctions") : config.title}</h1><p>{moduleName === "auctions" ? (festivalYear === 2026 ? "Historical Laddu, Kalasam and other auction winners from 2026." : "Manage published Laddu, Kalasam and other auction outcomes.") : config.description}</p></div><Link href="/admin" className="module-back"><ArrowLeft size={14} /> Dashboard</Link></div>}
+      {moduleName === "donations" && (
+        <section className="receipt-summary" aria-label="Donation receipt delivery summary">
+          <article><span>Total receipts sent</span><strong>{receiptStats.sent}</strong></article>
+          <article><span>WhatsApp sent</span><strong>{receiptStats.whatsapp}</strong></article>
+          <article><span>SMS sent</span><strong>{receiptStats.sms}</strong></article>
+          <article className={receiptStats.failed ? "has-failures" : ""}><span>Failed deliveries</span><strong>{receiptStats.failed}</strong></article>
+        </section>
+      )}
       <div className="module-toolbar">
         <input aria-label={`Search ${config.title}`} value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search records…" />
         {moduleName === "donations" && <button type="button" onClick={() => void exportFinanceWorkbook()} disabled={exportingWorkbook}><FileSpreadsheet size={15} /> {exportingWorkbook ? "Preparing Excel…" : "Export Excel"}</button>}
@@ -752,13 +841,7 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
                           </select>
                         </div>
                       ) : field.kind === "select" ? (
-                        <select value={String(values[field.key] ?? "")} required={field.required} onChange={(event) => {
-                          const value = event.target.value;
-                          updateField(field.key, value);
-                          if (moduleName === "donations" && field.key === "payment_status") {
-                            updateField("show_on_wall", value === "received");
-                          }
-                        }}><option value="">Select…</option>{field.options?.map((option) => <option key={option} value={option}>{paymentStatusLabels[option] ?? auctionCategoryLabels[option] ?? option}</option>)}</select>
+                        <select value={String(values[field.key] ?? "")} required={field.required} onChange={(event) => updateField(field.key, event.target.value)}><option value="">Select…</option>{field.options?.map((option) => <option key={option} value={option}>{paymentStatusLabels[option] ?? auctionCategoryLabels[option] ?? option}</option>)}</select>
                       ) : (
                         <input type={field.kind || "text"} value={String(values[field.key] ?? "")} required={field.required} min={field.kind === "number" ? "0" : undefined} step={field.kind === "number" ? "0.01" : undefined} onChange={(event) => updateField(field.key, event.target.value)} />
                       )}
@@ -770,7 +853,8 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
               );
             })}
           </div>
-          <div className="module-form-actions"><button type="button" onClick={startCreate}>Clear</button><button type="submit" disabled={saving}>{saving ? <LoaderCircle size={14} className="animate-spin" /> : <Save size={14} />}{editing ? "Save changes" : "Add record"}</button></div>
+          {moduleName === "donations" && <p className="module-note">Received donations trigger both receipt messages automatically. Pending donations are saved without sending.</p>}
+          <div className="module-form-actions"><button type="button" onClick={startCreate}>Clear</button><button type="submit" disabled={saving}>{saving ? <LoaderCircle size={14} className="animate-spin" /> : <Save size={14} />}{moduleName === "donations" ? "Save donation" : editing ? "Save changes" : "Add record"}</button></div>
         </form>
       ) : <p className="module-note">Select “Add record” to create a new item.</p>}
       {isGallery ? (
@@ -806,7 +890,10 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
                   <tr key={record.id}>
                     {tableFields.map((field) => (
                       <td key={field.key}>
-                        {field.key === "receipt_url" && record[field.key] ? <a href={String(record[field.key])} target="_blank" rel="noreferrer">Receipt ↗</a>
+                          {field.key === "receipt_no" && record[field.key] ? record.payment_status === "received" && typeof record.receipt_token === "string"
+                            ? <a href={getReceiptPath(String(record[field.key]), record.receipt_token)} target="_blank" rel="noreferrer">{String(record[field.key])} ↗</a>
+                            : String(record[field.key])
+                            : field.key === "whatsapp_status" || field.key === "sms_status" ? <span className={`delivery-status-badge is-${String(record[field.key] ?? "pending")}`}>{deliveryStatusLabel(record[field.key])}</span>
                           : field.key === "payment_status" ? <span className={`payment-status-badge ${record[field.key] === "received" ? "is-received" : "is-pending"}`}>{paymentStatusLabels[String(record[field.key])] ?? "—"}</span>
                             : field.key === "auction_type" ? (auctionCategoryLabels[String(record[field.key])] ?? "—")
                               : moduleName === "expenses" && field.key === "spent_at" && record.spent_at ? `${formatFestivalDate(String(record.spent_at))} ${formatFestivalTime(record.spent_at_time == null ? null : String(record.spent_at_time))}`
@@ -818,7 +905,29 @@ export function ModuleManager({ moduleName, compact = false, festivalYear }: { m
                                           : String(record[field.key] ?? "—")}
                       </td>
                     ))}
-                    <td><button type="button" onClick={() => startEdit(record)}>Edit</button><button type="button" className="module-delete" onClick={() => void deleteRecord(record)} aria-label={`Delete ${config.title} record`}><Trash2 size={14} /></button></td>
+                    <td className={moduleName === "donations" ? "donation-admin-actions" : undefined}>
+                      {moduleName === "donations" && record.payment_status === "received" && typeof record.receipt_no === "string" && typeof record.receipt_token === "string" && (() => {
+                        const receiptNo = String(record.receipt_no);
+                        const receiptToken = String(record.receipt_token);
+                        const receiptPath = getReceiptPath(receiptNo, receiptToken);
+                        const imagePath = getReceiptImagePath(receiptNo, receiptToken);
+                        const pdfPath = getReceiptPdfPath(receiptNo, receiptToken);
+                        const downloadName = `SGU-donation-certificate-${receiptNo.replace(/[^A-Za-z0-9-]+/g, "-")}`;
+                        return (
+                          <div className="donation-receipt-actions">
+                            <a href={receiptPath} target="_blank" rel="noreferrer">View receipt</a>
+                            <a href={imagePath} download={`${downloadName}.png`}>Download PNG</a>
+                            <a href={pdfPath} download={`${downloadName}.pdf`}>Download PDF</a>
+                            <button type="button" onClick={() => {
+                              const shareUrl = new URL(receiptPath, window.location.origin).toString();
+                              window.open(`https://wa.me/?text=${encodeURIComponent(`Donation certificate: ${shareUrl}`)}`, "_blank", "noopener,noreferrer");
+                            }}>Share WhatsApp</button>
+                            <button type="button" onClick={() => void retryReceiptDelivery(record)} disabled={saving}>Re-send receipt</button>
+                          </div>
+                        );
+                      })()}
+                      <button type="button" onClick={() => startEdit(record)}>Edit</button><button type="button" className="module-delete" onClick={() => void deleteRecord(record)} aria-label={`Delete ${config.title} record`}><Trash2 size={14} /></button>
+                    </td>
                   </tr>
                 ))}
             </tbody></table>

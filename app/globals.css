@@ -18,6 +18,63 @@
 html { scroll-behavior: smooth; scroll-padding-top: 85px; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-sans), sans-serif; font-size: 15px; -webkit-font-smoothing: antialiased; }
 main { display: flex; flex-direction: column; }
+
+.receipt-page { min-height: 100vh; align-items: center; justify-content: center; padding: 32px 16px; background: radial-gradient(circle at 50% 0, #55351e 0, #160e0a 55%); }
+.receipt-card { width: min(100%, 620px); padding: clamp(24px, 6vw, 48px); border: 1px solid #d5b66e; border-radius: 18px; background: #fffaf0; color: #33251b; box-shadow: 0 24px 80px #0008; }
+.receipt-brand { text-align: center; }
+.receipt-mark { display: inline-grid; width: 52px; height: 52px; place-items: center; border: 1px solid #b98b2a; border-radius: 50%; color: #7d291e; font-size: 26px; }
+.receipt-eyebrow { margin: 15px 0 7px; color: #98722a; font-size: 10px; font-weight: 700; letter-spacing: .16em; }
+.receipt-brand h1 { margin: 0; color: #572018; font-family: var(--font-display), Georgia, serif; font-size: clamp(30px, 7vw, 42px); font-weight: 600; }
+.receipt-brand>p:last-child { margin: 5px 0 0; color: #806b56; font-size: 13px; }
+.receipt-number { display: grid; gap: 5px; margin: 28px 0 0; padding: 13px 15px; border: 1px dashed #c9ab64; border-radius: 8px; text-align: center; }
+.receipt-number span, .receipt-details dt { color: #816e58; font-size: 11px; }
+.receipt-number strong { color: #51231b; font-size: 14px; letter-spacing: .05em; overflow-wrap: anywhere; }
+.receipt-details { display: grid; gap: 0; margin: 20px 0; }
+.receipt-details>div { display: grid; gap: 5px; padding: 13px 0; border-bottom: 1px solid #e8ddc8; }
+.receipt-details dt, .receipt-details dd { margin: 0; }
+.receipt-details dd { color: #33251b; font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.receipt-thank-you { margin: 20px 0; color: #725e49; font-size: 13px; line-height: 1.6; text-align: center; }
+.receipt-actions { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-top: 16px; border-top: 1px solid #e8ddc8; }
+.receipt-qr { display: grid; justify-items: center; gap: 6px; color: #806b56; font-size: 10px; }
+.receipt-qr img { width: 112px; height: 112px; }
+.receipt-qr-note { max-width: 190px; color: #806b56; font-size: 11px; line-height: 1.5; }
+.receipt-download { display: inline-flex; min-height: 42px; align-items: center; justify-content: center; padding: 0 17px; border-radius: 7px; background: #76281f; color: white; font-size: 12px; font-weight: 600; text-decoration: none; }
+.receipt-download:focus-visible { outline: 3px solid #d6aa47; outline-offset: 3px; }
+@media (max-width: 480px) {
+  .receipt-actions { align-items: flex-end; }
+  .receipt-download { padding: 0 12px; font-size: 11px; }
+}
+.certificate-page { width: min(100% - 32px, 820px); align-self: center; padding: 38px 0 54px; }
+.certificate-page-heading { margin: 0 0 18px; text-align: center; }
+.certificate-page-heading .receipt-eyebrow { margin-top: 0; }
+.certificate-page-heading h1 { margin: 0; color: #ffe4a0; font-family: var(--font-display), Georgia, serif; font-size: clamp(30px, 6vw, 42px); font-weight: 600; }
+.certificate-page-heading p { margin: 7px 0 0; color: #c5aa86; font-size: 13px; }
+.certificate-preview { margin: 0 auto; overflow: hidden; border: 1px solid #d5ad42; border-radius: 14px; background: #2b060d; box-shadow: 0 18px 55px #0008; }
+.certificate-preview img { display: block; width: 100%; height: auto; }
+.certificate-verification { margin-top: 18px; padding: 19px; border: 1px solid #694c25; border-radius: 12px; background: #170f0b; color: #f7ead1; }
+.certificate-verification-status { display: flex; align-items: center; gap: 9px; color: #adf0bc; font-size: 14px; }
+.certificate-verification-status span { display: grid; width: 25px; height: 25px; place-items: center; border: 1px solid #39844c; border-radius: 50%; background: #15341f; }
+.certificate-verification dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 18px; margin: 12px 0 0; }
+.certificate-verification dl>div { padding: 10px 0; border-top: 1px solid #33251b; }
+.certificate-verification dt { color: #c4a86d; font-size: 10px; }
+.certificate-verification dd { margin: 4px 0 0; color: #fff3dc; font-size: 13px; font-weight: 600; overflow-wrap: anywhere; }
+.certificate-privacy-note { margin: 10px 0 0; color: #b7a487; font-size: 11px; line-height: 1.5; }
+.certificate-download-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 16px; }
+.certificate-download-actions a { display: inline-flex; min-height: 39px; align-items: center; justify-content: center; padding: 0 13px; border: 1px solid #b98b2a; border-radius: 7px; color: #ffe4a0; font-size: 11px; font-weight: 600; text-decoration: none; }
+.certificate-download-actions a:first-child { border-color: #b98b2a; background: #76281f; color: white; }
+.certificate-download-actions a:focus-visible { outline: 3px solid #d6aa47; outline-offset: 3px; }
+@media (max-width: 520px) {
+  .certificate-page { width: min(100% - 22px, 820px); padding-top: 25px; }
+  .certificate-verification { padding: 14px; }
+  .certificate-verification dl { grid-template-columns: 1fr; }
+  .certificate-download-actions a { flex: 1 1 130px; }
+}
+.donation-admin-actions { min-width: 240px; }
+.donation-receipt-actions { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.donation-receipt-actions a, .donation-receipt-actions button { min-height: 28px; padding: 4px 7px; border: 1px solid #6b542e; border-radius: 5px; background: #21180f; color: #f3d996; font: inherit; font-size: 10px; text-decoration: none; white-space: nowrap; cursor: pointer; }
+.donation-receipt-actions a:hover, .donation-receipt-actions button:hover:not(:disabled) { background: #392816; }
+.donation-receipt-actions button:disabled { opacity: .6; cursor: wait; }
+.donation-receipt-actions a:focus-visible, .donation-receipt-actions button:focus-visible { outline: 2px solid #d6aa47; outline-offset: 2px; }
 ::selection { color: #fff; background: var(--red); }
 a { color: inherit; text-decoration: none; }
 button, input, select { font: inherit; }
