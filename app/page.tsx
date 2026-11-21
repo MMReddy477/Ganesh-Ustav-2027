@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowDown,
   ArrowRight,
   CalendarDays,
   Heart,
@@ -10,9 +9,9 @@ import {
   UsersRound,
 } from "lucide-react";
 import { Countdown } from "@/components/countdown";
-import { FloatingPetals } from "@/components/floating-petals";
 import { AudioToggle } from "@/components/audio-toggle";
 import { LazyGaneshScene } from "@/components/lazy-ganesh-scene";
+import { CinematicHero } from "@/components/cinematic-hero";
 import { Header } from "@/components/header";
 import { ScrollEffects } from "@/components/scroll-effects";
 import { DonationHistory } from "@/components/donation-history";
@@ -61,7 +60,7 @@ const faqSchema = {
       addressCountry: "IN",
     },
   },
-  image: [`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/images/ganesh-idol.jpg`],
+  image: [`${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/images/Ganesha%20beneath%20golden%20temple%20bells.png`],
   organizer: { "@type": "Organization", name: "Suryodaya Colony Ganesh Utsav Committee" },
 };
 
@@ -193,48 +192,7 @@ export default async function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <Header />
       <main className="public-homepage">
-        <section className="hero" id="home">
-          <div className="hero-grain" aria-hidden="true" />
-          <div className="hero-halo" aria-hidden="true" />
-          <FloatingPetals />
-          <div className="hero-wrap">
-            <div className="hero-copy">
-              <p className="eyebrow hero-eyebrow"><span className="live-dot" /> LIVE UPDATES · GANESH CHATURTHI 2027</p>
-              <h1>Ganesh Utsav <em>2027</em></h1>
-              <p className="hero-subtitle">Ganapati Bappa Morya! Every rupee, every sponsor and every celebration of Suryodaya Colony — shared openly with all residents, in real time.</p>
-              <div className="hero-identity" aria-label="Suryodaya Colony community facts">
-                <div className="hero-identity-heading"><strong>Suryodaya Colony</strong><span>One community · Bandlaguda Jagir · Hyderabad</span></div>
-                <div className="hero-identity-stats">
-                  <span><strong>34</strong><small>Families celebrating together</small></span>
-                  <span><strong>4th</strong><small>Year Ganesh Utsav</small></span>
-                  <span><strong>Every home</strong><small>Involved</small></span>
-                  <span><strong>100%</strong><small>Live financial transparency</small></span>
-                </div>
-              </div>
-            </div>
-            <div className="hero-art">
-              <div className="hero-art-orbit orbit-one" />
-              <div className="hero-art-orbit orbit-two" />
-              <div className="hero-image-frame">
-                <Image
-                  src="/images/ganesh-idol.jpg"
-                  alt="Lord Ganesha adorned with flowers at the Suryodaya Colony mandapam"
-                  fill
-                  priority
-                  sizes="(max-width: 760px) 85vw, 44vw"
-                  className="hero-image"
-                />
-              </div>
-              <div className="hero-art-note"><span>The auspicious beginning</span><small>Suryodaya Colony · 2027</small></div>
-              <div className="hero-sparkle sparkle-a">✳</div>
-              <div className="hero-sparkle sparkle-b">✴</div>
-            </div>
-            <span className="hero-diya hero-diya-top" aria-hidden="true">🪔</span>
-            <span className="hero-diya hero-diya-bottom" aria-hidden="true">🪔</span>
-          </div>
-          <a className="scroll-cue" href="#overview"><span>SCROLL TO FEEL THE JOY</span><ArrowDown size={14} /></a>
-          <div className="hero-bottom-line" aria-hidden="true" />
-        </section>
+        <CinematicHero />
 
         <HomepagePulse
           donations={[...donorWall].sort((a, b) => new Date(b.received_at).getTime() - new Date(a.received_at).getTime())}

@@ -73,7 +73,13 @@ function IdolSculpture() {
 
 export function GaneshScene() {
   return (
-    <Canvas className="scene-canvas" dpr={[1, 1.5]} camera={{ position: [0, 0.4, 5.1], fov: 36 }} gl={{ alpha: true, antialias: true }} aria-label="Slowly rotating golden Ganesha-inspired sculpture">
+    <Canvas
+      className="scene-canvas"
+      dpr={[1, 1.5]}
+      camera={{ position: [0, 0.4, 5.1], fov: 36 }}
+      gl={{ alpha: true, antialias: true }}
+      aria-label="Slowly rotating golden Ganesha-inspired sculpture"
+    >
       <ambientLight intensity={1.15} />
       <directionalLight position={[2, 4, 4]} intensity={3.1} color="#ffe0a2" />
       <pointLight position={[-3, 0, 2]} intensity={18} color="#ef8e47" />

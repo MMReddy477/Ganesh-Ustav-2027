@@ -12,6 +12,7 @@ const links = [
   ["Donors", "#donations"],
   ["Expenses", "#expenses"],
   ["Events", "#schedule"],
+  ["Gallery", "#gallery"],
 ];
 
 export function Header() {

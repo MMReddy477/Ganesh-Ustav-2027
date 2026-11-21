@@ -15,6 +15,15 @@ export function PublicActions({ upiId, phone }: { upiId?: string; phone?: string
     : null;
 
   useEffect(() => {
+    const openDonation = () => {
+      setDonateOpen(true);
+      setMenuOpen(false);
+    };
+    window.addEventListener("utsav:open-donation", openDonation);
+    return () => window.removeEventListener("utsav:open-donation", openDonation);
+  }, []);
+
+  useEffect(() => {
     if (!donateOpen) return;
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") setDonateOpen(false);

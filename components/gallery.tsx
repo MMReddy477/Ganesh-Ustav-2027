@@ -5,26 +5,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Download, Film, Music, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type GalleryImage = { src: string; alt: string; category: string };
+type GalleryImage = { id: string; src: string; alt: string; title: string; category: string };
 type PublishedImage = { id: string; title: string; description: string | null; image_url: string; category: string; alt_text: string };
 type PublishedVideo = { id: string; title: string; description: string | null; video_url: string; poster_url: string | null; category: string };
 type PublishedAudio = { id: string; title: string; description: string | null; audio_url: string; category: string };
 
-const defaultImages: GalleryImage[] = [
-  { src: "/images/ganesh-idol.jpg", alt: "Lord Ganesha adorned in flowers", category: "Bappa" },
-  { src: "/images/ganesh-detail.jpg", alt: "Ganesh Utsav prayers and festive decorations", category: "Rituals" },
-  { src: "/images/ganesh-art.jpg", alt: "A colorful devotional Ganesha artwork", category: "Bappa" },
-  { src: "/images/committee.jpg", alt: "Suryodaya Colony volunteers preparing for the festivities", category: "Community" },
-  { src: "/images/ganesh-idol.jpg", alt: "Aarti and flower offerings for Bappa", category: "Rituals" },
-];
-const filters = ["All moments", "Bappa", "Rituals", "Community"];
-
 export function Gallery({ publishedImages = [], publishedVideos = [], publishedAudios = [] }: { publishedImages?: PublishedImage[]; publishedVideos?: PublishedVideo[]; publishedAudios?: PublishedAudio[] }) {
   const [category, setCategory] = useState("All moments");
   const [selected, setSelected] = useState<GalleryImage | null>(null);
-  const images: GalleryImage[] = publishedImages.length
-    ? publishedImages.map((image) => ({ src: image.image_url, alt: image.alt_text, category: image.category }))
-    : defaultImages;
+  const images: GalleryImage[] = publishedImages.map((image) => ({
+    id: image.id,
+    src: image.image_url,
+    alt: image.alt_text || image.title,
+    title: image.title || image.alt_text,
+    category: image.category || "Other",
+  }));
+  const filters = ["All moments", ...new Set(images.map((image) => image.category))];
   const visibleImages = category === "All moments" ? images : images.filter((image) => image.category === category);
 
   useEffect(() => {
@@ -38,11 +34,13 @@ export function Gallery({ publishedImages = [], publishedVideos = [], publishedA
 
   return (
     <>
-      <div className="gallery-controls" role="group" aria-label="Filter gallery">
-        {filters.map((filter) => (
-          <button key={filter} type="button" className={`gallery-filter${category === filter ? " active" : ""}`} aria-pressed={category === filter} onClick={() => setCategory(filter)}>{filter}</button>
-        ))}
-      </div>
+      {images.length > 0 && (
+        <div className="gallery-controls" role="group" aria-label="Filter gallery">
+          {filters.map((filter) => (
+            <button key={filter} type="button" className={`gallery-filter${category === filter ? " active" : ""}`} aria-pressed={category === filter} onClick={() => setCategory(filter)}>{filter}</button>
+          ))}
+        </div>
+      )}
       <div className="gallery-grid">
         <AnimatePresence mode="popLayout">
           {visibleImages.map((image, index) => (
@@ -54,15 +52,16 @@ export function Gallery({ publishedImages = [], publishedVideos = [], publishedA
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.22, delay: index * 0.025 }}
               className="gallery-tile"
-              key={`${image.category}-${index}`}
+              key={image.id}
               onClick={() => setSelected(image)}
               aria-label={`View image: ${image.alt}`}
             >
               <Image src={image.src} alt={image.alt} fill unoptimized sizes="(max-width: 760px) 50vw, 33vw" />
-              <span>{image.category === "Bappa" ? "Bappa’s blessings" : image.category === "Community" ? "A community of seva" : "Rituals & traditions"}</span>
+              <span>{image.title}</span>
             </motion.button>
           ))}
         </AnimatePresence>
+        {images.length === 0 && <p className="gallery-empty">Published photos from Admin → Gallery will appear here.</p>}
       </div>
       {publishedVideos.length > 0 && (
         <div className="public-media-library">

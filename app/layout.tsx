@@ -41,13 +41,13 @@ export const metadata: Metadata = {
     title: "Ganesh Utsav 2027 | Suryodaya Colony",
     description:
       "Celebrating faith, culture, and community in Suryodaya Colony, Hyderabad. Join the Ganesh Utsav from September 14 to 23, 2027.",
-    images: [{ url: "/images/ganesh-idol.jpg", width: 1200, height: 1600, alt: "Lord Ganesha at Suryodaya Colony" }],
+    images: [{ url: "/images/Ganesha%20beneath%20golden%20temple%20bells.png", width: 1200, height: 675, alt: "Lord Ganesha beneath golden temple bells" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Ganesh Utsav 2027 | Suryodaya Colony",
     description: "Celebrating Faith, Culture & Community.",
-    images: ["/images/ganesh-idol.jpg"],
+    images: ["/images/Ganesha%20beneath%20golden%20temple%20bells.png"],
   },
   alternates: { canonical: "/" },
   manifest: "/manifest.webmanifest",
@@ -63,7 +63,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
-      <body>{children}<FestivalTools /></body>
+      <body suppressHydrationWarning>{children}<FestivalTools /></body>
     </html>
   );
 }

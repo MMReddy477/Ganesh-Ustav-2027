@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { logAdminAuthEvent } from "@/lib/supabase/audit";
@@ -32,13 +32,14 @@ export function AdminAuthProvider({
 }) {
   const router = useRouter();
   const [identity, setIdentity] = useState<AdminIdentity | null>(initialIdentity);
+  const signOutInProgress = useRef(false);
 
   useEffect(() => {
     const supabase = createClient();
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT") {
         setIdentity(null);
-        router.replace("/admin/login");
+        if (!signOutInProgress.current) router.replace("/admin/login");
       } else if (session?.user) {
         setIdentity((current) => toIdentity(session.user, current?.role ?? initialIdentity.role));
       }
@@ -51,9 +52,14 @@ export function AdminAuthProvider({
     identity,
     async signOut() {
       const supabase = createClient();
-      await logAdminAuthEvent(supabase, "LOGOUT");
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      signOutInProgress.current = true;
+      try {
+        await logAdminAuthEvent(supabase, "LOGOUT");
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+      } finally {
+        signOutInProgress.current = false;
+      }
     },
   }), [identity]);
 

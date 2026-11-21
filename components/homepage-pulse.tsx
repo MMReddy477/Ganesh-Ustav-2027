@@ -99,11 +99,9 @@ function AnimatedMetric({ metric }: { metric: Metric }) {
   );
 }
 
-function donationAddress(donation: HomepageDonation) {
-  if (donation.plot_flat) {
-    return /^(villa|plot)/i.test(donation.plot_flat) ? donation.plot_flat : `Flat ${donation.plot_flat}`;
-  }
-  return donation.donor_name || "Community devotee";
+function donationName(donation: HomepageDonation) {
+  const name = donation.donor_name?.trim();
+  return name ? `${name.charAt(0).toUpperCase()}${name.slice(1)}` : "Community devotee";
 }
 
 export function HomepagePulse({
@@ -121,19 +119,19 @@ export function HomepagePulse({
   emptyMessage?: string;
   variant?: "public" | "admin";
 }) {
-  const seenRecentDonationKeys = new Set<string>();
-  const recentDonations = donations.filter((donation) => {
-    const location = donation.plot_flat?.trim().toLowerCase() || donation.donor_name?.trim().toLowerCase();
-    if (!location) return true;
-
-    const key = `${location}\u0000${Number(donation.amount)}\u0000${formatFestivalDate(donation.received_at)}`;
-    if (seenRecentDonationKeys.has(key)) return false;
-    seenRecentDonationKeys.add(key);
-    return true;
-  }).slice(0, 8);
+  const recentDonations = donations.slice(0, 8);
   const recentFeedWindow = useRef<HTMLDivElement>(null);
   const [selectedMetric, setSelectedMetric] = useState<Metric | null>(null);
   const detailsDialog = useRef<HTMLDialogElement>(null);
+
+  const renderRecentDonations = () => recentDonations.map((donation, index) => (
+    <span className="recent-feed-item" key={`${donation.received_at}-${donation.plot_flat ?? donation.donor_name ?? index}-${index}`}>
+      <Heart size={13} />
+      <strong>{donationName(donation)}</strong>
+      <span>:</span>
+      <strong>{formatMetric(Number(donation.amount), "currency")}</strong>
+    </span>
+  ));
 
   useEffect(() => {
     const viewport = recentFeedWindow.current;
@@ -142,37 +140,35 @@ export function HomepagePulse({
     let frame = 0;
     let previousTime = 0;
     let direction = 1;
-    let position = 0;
+    let isPointerDown = false;
     const track = viewport.firstElementChild as HTMLElement | null;
+    const firstGroup = track?.firstElementChild as HTMLElement | null;
+    const handlePointerDown = () => {
+      isPointerDown = true;
+    };
+    const handlePointerUp = () => {
+      isPointerDown = false;
+    };
     const scrollSlowly = (time: number) => {
-      if (previousTime && track && !viewport.matches(":hover, :active") && !viewport.contains(document.activeElement)) {
+      if (previousTime && !isPointerDown && !viewport.matches(":hover") && !viewport.contains(document.activeElement)) {
         const elapsed = Math.min(time - previousTime, 50);
-        const maxScroll = viewport.scrollWidth - viewport.clientWidth;
-        if (maxScroll > 0) {
-          track.style.transform = "";
-          const nextScroll = viewport.scrollLeft + elapsed * 0.008 * direction;
-          if (nextScroll >= maxScroll) {
-            viewport.scrollLeft = maxScroll;
-            direction = -1;
-          } else if (nextScroll <= 0) {
-            viewport.scrollLeft = 0;
-            direction = 1;
-          } else {
-            viewport.scrollLeft = nextScroll;
-          }
+        const groupWidth = firstGroup?.getBoundingClientRect().width ?? 0;
+        if (groupWidth > 0 && window.matchMedia("(max-width: 760px)").matches) {
+          viewport.scrollLeft = (viewport.scrollLeft + elapsed * 0.035) % groupWidth;
         } else {
-          const maxTravel = Math.max(0, viewport.clientWidth - track.scrollWidth);
-          const nextPosition = position + elapsed * 0.008 * direction;
-          if (nextPosition >= maxTravel) {
-            position = maxTravel;
-            direction = -1;
-          } else if (nextPosition <= 0) {
-            position = 0;
-            direction = 1;
-          } else {
-            position = nextPosition;
+          const maxScroll = Math.max(0, viewport.scrollWidth - viewport.clientWidth);
+          if (maxScroll > 0) {
+            const nextScroll = viewport.scrollLeft + elapsed * 0.02 * direction;
+            if (nextScroll >= maxScroll) {
+              viewport.scrollLeft = maxScroll;
+              direction = -1;
+            } else if (nextScroll <= 0) {
+              viewport.scrollLeft = 0;
+              direction = 1;
+            } else {
+              viewport.scrollLeft = nextScroll;
+            }
           }
-          track.style.transform = `translateX(${position}px)`;
         }
       }
 
@@ -180,10 +176,15 @@ export function HomepagePulse({
       frame = window.requestAnimationFrame(scrollSlowly);
     };
 
+    viewport.addEventListener("pointerdown", handlePointerDown);
+    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointercancel", handlePointerUp);
     frame = window.requestAnimationFrame(scrollSlowly);
     return () => {
       window.cancelAnimationFrame(frame);
-      if (track) track.style.transform = "";
+      viewport.removeEventListener("pointerdown", handlePointerDown);
+      window.removeEventListener("pointerup", handlePointerUp);
+      window.removeEventListener("pointercancel", handlePointerUp);
     };
   }, [recentDonations.length]);
 
@@ -248,13 +249,8 @@ export function HomepagePulse({
         {recentDonations.length ? (
           <div ref={recentFeedWindow} className="recent-feed-window" tabIndex={0} aria-label="Scrollable recent donations">
             <div className="recent-feed-track">
-              {recentDonations.map((donation, index) => (
-                <span className="recent-feed-item" key={`${donation.received_at}-${donation.plot_flat ?? donation.donor_name ?? index}-${index}`}>
-                  <Heart size={13} />
-                  <span>{donationAddress(donation)}</span>
-                  <strong>{formatMetric(Number(donation.amount), "currency")}</strong>
-                </span>
-              ))}
+              <div className="recent-feed-group">{renderRecentDonations()}</div>
+              <div className="recent-feed-group recent-feed-group-copy" aria-hidden="true">{renderRecentDonations()}</div>
             </div>
           </div>
         ) : (
