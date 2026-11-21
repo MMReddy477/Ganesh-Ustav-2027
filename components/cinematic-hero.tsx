@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowRight, CalendarDays, ChartNoAxesColumnIncreasing, House, Images, UsersRound } from "lucide-react";
+import { ArrowDown, ArrowRight, CalendarDays, ChartNoAxesColumnIncreasing, House, Images, Pause, Play, UsersRound, Volume2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FloatingPetals } from "@/components/floating-petals";
 
@@ -12,26 +12,54 @@ const IntroCanvas = dynamic(
   { ssr: false, loading: () => null },
 );
 
-const INTRO_KEY = "suryodaya-ganesh-intro-complete";
+const INTRO_KEY = "suryodaya-ganesh-intro-complete-v3";
 
 export function CinematicHero() {
   const heroRef = useRef<HTMLElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [ready, setReady] = useState(false);
   const [introActive, setIntroActive] = useState(true);
   const [revealStarted, setRevealStarted] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   const finishIntro = useCallback(() => {
-    window.sessionStorage.setItem(INTRO_KEY, "true");
+    try {
+      window.localStorage.setItem(INTRO_KEY, "true");
+    } catch (error) {
+      console.error("Could not save the intro preference:", error);
+    }
+    audioRef.current?.pause();
     setIntroActive(false);
     setRevealStarted(true);
   }, []);
 
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReducedMotion || window.sessionStorage.getItem(INTRO_KEY) === "true") {
+    let introSeen = false;
+    try {
+      introSeen = window.localStorage.getItem(INTRO_KEY) === "true";
+    } catch (error) {
+      console.error("Could not read the intro preference:", error);
+    }
+    if (prefersReducedMotion || introSeen) {
       setIntroActive(false);
       setRevealStarted(true);
     }
+    setReady(true);
   }, []);
+
+  useEffect(() => {
+    if (!ready || !introActive) return;
+    const previousOverflow = document.documentElement.style.overflow;
+    const audio = audioRef.current;
+    document.documentElement.style.overflow = "hidden";
+    const timeout = window.setTimeout(finishIntro, 10_000);
+    return () => {
+      document.documentElement.style.overflow = previousOverflow;
+      window.clearTimeout(timeout);
+      audio?.pause();
+    };
+  }, [finishIntro, introActive, ready]);
 
   useEffect(() => {
     const element = heroRef.current;
@@ -61,8 +89,24 @@ export function CinematicHero() {
     };
   }, []);
 
+  async function toggleIntroSound() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (soundEnabled) {
+      audio.pause();
+      setSoundEnabled(false);
+      return;
+    }
+    try {
+      await audio.play();
+      setSoundEnabled(true);
+    } catch (error) {
+      console.error("Devotional intro music could not be played:", error);
+    }
+  }
+
   return (
-    <section ref={heroRef} className="hero hero-cinematic" id="home">
+    <section ref={heroRef} className={`hero hero-cinematic${ready && introActive ? " hero-intro-open" : ""}`} id="home">
       <div className="hero-grain" aria-hidden="true" />
       <div className="hero-halo" aria-hidden="true" />
       <motion.div
@@ -89,6 +133,18 @@ export function CinematicHero() {
             </button>
             <a className="button button-outline" href="#schedule"><CalendarDays size={15} /> Events</a>
             <a className="button button-outline" href="#gallery"><Images size={15} /> Gallery</a>
+            {!introActive && (
+              <button
+                type="button"
+                className="button button-outline"
+                onClick={() => {
+                  setRevealStarted(false);
+                  setIntroActive(true);
+                }}
+              >
+                <Play size={15} /> Watch intro
+              </button>
+            )}
           </div>
           <div className="hero-identity" aria-label="Suryodaya Colony community facts">
             <div className="hero-identity-stats">
@@ -127,23 +183,171 @@ export function CinematicHero() {
       <a className="scroll-cue" href="#overview"><span>SCROLL TO FEEL THE JOY</span><ArrowDown size={14} /></a>
       <div className="hero-bottom-line" aria-hidden="true" />
 
-      <div className={`hero-intro-layer${introActive ? "" : " hero-intro-layer-complete"}`}>
-        <IntroCanvas active={introActive} onReveal={() => setRevealStarted(true)} onComplete={finishIntro} />
-      </div>
-      {introActive && (
+      {ready && introActive && (
+        <div className="hero-intro-overlay" role="dialog" aria-modal="true" aria-label="From Bal Ganesh to Lord Ganesha">
+          <div className="hero-intro-visuals" aria-hidden="true">
+            <div className="intro-scene intro-sequence-image sequence-image-one">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-sequence-image sequence-image-two">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-sequence-image sequence-image-three">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-sequence-image sequence-image-four">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-sequence-image sequence-image-five">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-sequence-image sequence-image-six">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-sequence-image sequence-image-seven">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-sequence-image sequence-image-eight">
+              <span className="sequence-image-backdrop" /><span className="sequence-image-main" />
+            </div>
+            <div className="intro-scene intro-scene-om">
+              <div className="cosmic-universe">
+                <span className="cosmic-galaxy galaxy-one" />
+                <span className="cosmic-galaxy galaxy-two" />
+                <span className="cosmic-nebula" />
+              </div>
+              <span className="opening-image" />
+              <span className="opening-ui-cleanup" />
+              <span className="intro-om">ॐ</span>
+            </div>
+            <div className="intro-scene intro-scene-kailasa">
+              <span className="kailasa-reference-image" />
+              <span className="kailasa-portal" />
+              <span className="kailasa-sun" />
+              <span className="kailasa-peak kailasa-peak-back" />
+              <span className="kailasa-peak kailasa-peak-mid" />
+              <span className="kailasa-peak kailasa-peak-front" />
+              <span className="kailasa-cloud" />
+              <span className="kailasa-cloud kailasa-cloud-two" />
+              <div className="parvati-silhouette parvati-meditating">
+                <i />
+                <span className="parvati-lotus" />
+                <span className="parvati-hands" />
+                <span className="parvati-smile" />
+              </div>
+              <span className="kailasa-petals">✿　✿　✿</span>
+              <span className="kailasa-diya" />
+              <div className="sandalwood-vessel"><span /></div>
+            </div>
+            <div className="intro-scene intro-scene-creation">
+              <span className="creation-reference-image" />
+              <span className="sanctuary-arch" />
+              <span className="creation-aura" />
+              <div className="parvati-silhouette parvati-creating">
+                <i />
+                <span className="parvati-lotus" />
+                <span className="parvati-hands creation-hands"><i /></span>
+                <span className="parvati-smile" />
+              </div>
+              <span className="creation-energy energy-left" />
+              <span className="creation-energy energy-right" />
+              <span className="creation-lotus"><i /><i /><i /><i /><i /><i /></span>
+              <div className="creation-child">
+                <span className="creation-child-head"><i /></span>
+                <span className="creation-child-body" />
+              </div>
+              <span className="creation-sparkles">✦　✧　✦　✧　✦</span>
+              <span className="creation-lens-petal" />
+            </div>
+            <div className="intro-scene intro-scene-bal-ganesh">
+              <span className="bal-sanctuary-glow" />
+              <span className="bal-reference-image" />
+              <span className="bal-reveal-petal" />
+              <div className="parvati-silhouette parvati-bal">
+                <i />
+                <span className="parvati-lotus" />
+                <span className="parvati-hand-on-shoulder" />
+              </div>
+              <div className="bal-ganesh">
+                <span className="bal-halo" />
+                <span className="bal-crown">✦</span>
+                <span className="bal-ear ear-left" />
+                <span className="bal-ear ear-right" />
+                <span className="bal-head"><i /><b /></span>
+                <span className="bal-body" />
+                <span className="bal-blessing-hand" />
+              </div>
+              <span className="bal-petals">✿　✦　✿　✦　✿</span>
+            </div>
+            <div className="intro-scene intro-scene-garden">
+              <span className="garden-reference-image" />
+              <span className="garden-sky" />
+              <span className="garden-trees" />
+              <span className="garden-pond" />
+              <span className="garden-lotus lotus-one" />
+              <span className="garden-lotus lotus-two" />
+              <span className="garden-lotus lotus-three" />
+              <span className="garden-peacock peacock-left"><i /><b /></span>
+              <span className="garden-peacock peacock-right"><i /><b /></span>
+              <div className="heavenly-child">
+                <span className="heavenly-child-head">
+                  <i className="garden-ear" />
+                  <i className="garden-eye" />
+                  <b className="garden-trunk" />
+                  <em className="garden-crown">✦</em>
+                </span>
+                <span className="heavenly-child-body" />
+                <span className="heavenly-child-aura" />
+              </div>
+              <span className="golden-butterfly butterfly-left">✦</span>
+              <span className="golden-butterfly butterfly-right">✦</span>
+              <span className="garden-particles">✦　✧　✦　✧</span>
+            </div>
+            <div className="intro-scene intro-scene-transformation">
+              <span className="transformation-om">ॐ</span>
+              <span className="transformation-reference-image" />
+              <span className="transformation-aura" />
+              <span className="transformation-energy">✦　✧　✦　✧　✦</span>
+              <span className="match-hand child-match-hand" />
+              <span className="match-hand divine-match-hand" />
+              <span className="transformation-idol" />
+            </div>
+            <div className="intro-scene intro-scene-throne">
+              <span className="throne-veil" />
+              <span className="temple-bell bell-left" />
+              <span className="temple-bell bell-right" />
+              <span className="intro-diya diya-left" />
+              <span className="intro-diya diya-right" />
+              <span className="intro-marigolds">✿　✿　✿　✿　✿</span>
+              <span className="throne-petals">✿　✿　✿　✿　✿　✿</span>
+            </div>
+            <div className="intro-scene intro-scene-title">
+              <span className="title-om">ॐ</span>
+              <strong>SURYODAYA COLONY GANESH UTSAV</strong>
+              <span>One Community • 4th Year Celebration</span>
+              <small>Faith • Community • Transparency</small>
+              <em>Ganapati Bappa Morya 🙏</em>
+            </div>
+          </div>
+          <div className="hero-intro-layer">
+            <IntroCanvas active={introActive} onReveal={() => setRevealStarted(true)} onComplete={finishIntro} />
+          </div>
           <>
-            <motion.div
-              className="hero-intro-scrim"
-              initial={{ opacity: 1 }}
-              animate={{ opacity: revealStarted ? 0 : 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: revealStarted ? 1.25 : 0.25, ease: "easeOut" }}
-              aria-hidden="true"
-            />
-            <button className="hero-intro-skip" type="button" onClick={finishIntro}>
-              Skip intro <ArrowRight size={14} />
-            </button>
+            <audio ref={audioRef} src="/media/ganesh-song.mpeg" preload="none" />
+            <div className="hero-intro-controls">
+              <button className="hero-intro-sound" type="button" onClick={toggleIntroSound} aria-pressed={soundEnabled}>
+                {soundEnabled ? <Pause size={14} /> : <Volume2 size={14} />}
+                {soundEnabled ? "Mute music" : "Play devotional music"}
+              </button>
+              <button className="hero-intro-skip" type="button" onClick={finishIntro} autoFocus>
+                Skip intro <ArrowRight size={14} />
+              </button>
+            </div>
           </>
+        </div>
+      )}
+      {!introActive && ready && revealStarted && (
+        <div className="hero-intro-layer hero-intro-layer-complete" aria-hidden="true" />
       )}
     </section>
   );

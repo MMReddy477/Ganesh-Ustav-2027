@@ -1255,3 +1255,2596 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) {
   .hero-cinematic .hero-art { opacity: 1 !important; transform: none !important; }
 }
+
+.hero-intro-overlay {
+  position: fixed;
+  z-index: 40;
+  inset: 0;
+  overflow: hidden;
+  background: #100a08;
+  color: #fff3dc;
+}
+.hero-cinematic.hero-intro-open { position: relative; z-index: 60; }
+.hero-intro-overlay::after {
+  position: absolute;
+  z-index: 12;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #f8d77e, #be7925);
+  content: "";
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: intro-progress 10s linear forwards;
+}
+.hero-intro-visuals, .hero-intro-layer { position: absolute; inset: 0; }
+.hero-intro-visuals { z-index: 1; overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #39220e, #100a08 72%); }
+.hero-intro-layer { z-index: 4; pointer-events: none; }
+.hero-intro-layer .hero-intro-canvas, .hero-intro-layer .hero-intro-canvas canvas { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; }
+.intro-scene {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  overflow: hidden;
+  opacity: 0;
+  animation-name: intro-scene-reveal;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+.intro-scene>p {
+  position: absolute;
+  bottom: max(66px, 10vh);
+  margin: 0;
+  color: #f2dcb2;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(17px, 2.2vw, 26px);
+  letter-spacing: .04em;
+  text-align: center;
+  text-shadow: 0 2px 24px #000;
+}
+.intro-scene-om { animation-duration: 4s; animation-delay: 0s; }
+.intro-om {
+  color: #f3c55f;
+  font-family: Georgia, serif;
+  font-size: clamp(150px, 31vw, 350px);
+  line-height: 1;
+  text-shadow: 0 0 18px #ffcf65, 0 0 90px #e58b24;
+  animation: intro-om-glow 3s ease-in-out infinite alternate;
+}
+.intro-scene-om>p { bottom: 22%; }
+.intro-scene-kailasa {
+  isolation: isolate;
+  background: linear-gradient(180deg, #281b24 0%, #9a5b37 47%, #f3ac4e 100%);
+  animation-duration: 4s;
+  animation-delay: 4s;
+}
+.kailasa-sun {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  width: min(28vw, 280px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff4c2 0%, #ffd783 38%, #e88739 69%, transparent 70%);
+  filter: drop-shadow(0 0 55px #ffc45a);
+  transform: translateX(-50%);
+}
+.kailasa-peak {
+  position: absolute;
+  right: -8%;
+  bottom: 17%;
+  left: -8%;
+  height: 62%;
+  clip-path: polygon(0 100%, 12% 72%, 22% 78%, 39% 28%, 48% 49%, 57% 5%, 68% 53%, 77% 36%, 100% 100%);
+}
+.kailasa-peak-back { z-index: -3; background: linear-gradient(145deg, #e5c4a0, #8b5a4a 70%); opacity: .63; }
+.kailasa-peak-mid { z-index: -2; bottom: 10%; background: linear-gradient(160deg, #d6a77a, #523b40 70%); transform: scaleX(1.17); }
+.kailasa-peak-front { z-index: -1; bottom: 2%; height: 39%; background: linear-gradient(180deg, #ad7450, #231b22); clip-path: polygon(0 100%, 21% 30%, 37% 100%, 63% 11%, 100% 100%); }
+.kailasa-cloud {
+  position: absolute;
+  right: -10%;
+  bottom: 22%;
+  left: -10%;
+  height: 13%;
+  border-radius: 50%;
+  background: #ffd28b55;
+  filter: blur(26px);
+  animation: kailasa-cloud-drift 9s ease-in-out infinite alternate;
+}
+.kailasa-cloud-two { bottom: 35%; opacity: .55; animation-delay: -4s; transform: scale(.8); }
+.intro-scene-kailasa>p { z-index: 2; bottom: 9%; }
+.intro-scene-creation {
+  background: radial-gradient(ellipse at 50% 52%, #8a4c24 0%, #321b12 34%, #100a08 76%);
+  animation-duration: 4s;
+  animation-delay: 8s;
+}
+.creation-aura {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  width: min(52vw, 520px);
+  aspect-ratio: 1;
+  border: 1px solid #ffdc8a8c;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff2bd 0%, #f7bb4c55 15%, #e77a2430 45%, transparent 70%);
+  box-shadow: 0 0 80px #ffb7478a, inset 0 0 60px #ffda7c55;
+  transform: translate(-50%, -50%);
+  animation: creation-aura-pulse 2.5s ease-in-out infinite alternate;
+}
+.creation-child {
+  position: absolute;
+  top: 44%;
+  left: 50%;
+  width: clamp(44px, 7vw, 78px);
+  aspect-ratio: 1;
+  border: 1px solid #fff4c9;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff8da, #f3bd55 45%, #a34a19 100%);
+  box-shadow: 0 0 25px #ffe09a, 0 0 85px #ee9b31;
+  transform: translate(-50%, -50%);
+}
+.parvati-silhouette {
+  position: absolute;
+  top: 54%;
+  left: 25%;
+  width: clamp(62px, 9vw, 110px);
+  height: clamp(145px, 24vw, 240px);
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 18px #f4b94c);
+}
+.parvati-silhouette::before {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 52%;
+  aspect-ratio: 1;
+  border: 1px solid #ffe7a4;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff1c6, #d98b36 74%);
+  box-shadow: 0 0 24px #ffc963;
+  content: "";
+  transform: translateX(-50%);
+}
+.parvati-silhouette::after {
+  position: absolute;
+  top: -5%;
+  left: 50%;
+  width: 72%;
+  height: 23%;
+  border: 1px solid #ffe7a4;
+  border-radius: 50% 50% 8% 8%;
+  background: linear-gradient(180deg, #ffe7a4, #ad6427);
+  content: "";
+  transform: translateX(-50%);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.parvati-silhouette i {
+  position: absolute;
+  top: 37%;
+  right: 4%;
+  bottom: 0;
+  left: 4%;
+  border: 1px solid #fbdc91;
+  border-radius: 48% 48% 10% 10%;
+  background: linear-gradient(120deg, #f8cc72, #a95227 60%, #f0bf5a);
+  clip-path: polygon(50% 0, 76% 10%, 100% 100%, 0 100%, 24% 10%);
+}
+.creation-energy {
+  position: absolute;
+  top: 55%;
+  left: 26%;
+  width: 30%;
+  height: 2px;
+  background: linear-gradient(90deg, #ffdb86, #fff5cb, transparent);
+  box-shadow: 0 0 18px #ffcf69;
+  transform: rotate(-11deg);
+  transform-origin: left center;
+  animation: creation-energy-flow 1.4s ease-in-out infinite alternate;
+}
+.creation-lotus {
+  position: absolute;
+  top: 62%;
+  left: 50%;
+  width: clamp(160px, 23vw, 270px);
+  height: clamp(90px, 13vw, 150px);
+  transform: translate(-50%, -50%);
+}
+.creation-lotus i {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  width: 24%;
+  height: 69%;
+  border: 1px solid #ffe6aa;
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(135deg, #fff0c7, #e8893c 75%);
+  box-shadow: 0 0 22px #ffc65f;
+  transform-origin: bottom center;
+}
+.creation-lotus i:nth-child(1) { transform: translateX(-50%) rotate(0deg); }
+.creation-lotus i:nth-child(2) { transform: translateX(-50%) rotate(-32deg); }
+.creation-lotus i:nth-child(3) { transform: translateX(-50%) rotate(32deg); }
+.creation-lotus i:nth-child(4) { transform: translateX(-50%) rotate(-62deg); }
+.creation-lotus i:nth-child(5) { transform: translateX(-50%) rotate(62deg); }
+.creation-lotus i:nth-child(6) { transform: translateX(-50%) rotate(90deg); }
+.intro-scene-creation>p { bottom: 9%; }
+.intro-scene-young-ganesh {
+  background: radial-gradient(ellipse at 50% 42%, #b77731 0%, #422518 31%, #100a08 72%);
+  animation-duration: 4s;
+  animation-delay: 12s;
+}
+.young-ganesh-halo {
+  position: relative;
+  display: grid;
+  width: min(43vw, 430px);
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid #ffe4a3aa;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fac96c20 0%, #ffd77d16 52%, transparent 70%);
+  box-shadow: 0 0 65px #ffbc4b69, inset 0 0 50px #ffcb6060;
+}
+.young-ganesh-halo::before {
+  color: #ffe3a0;
+  content: "गं";
+  font-family: Georgia, serif;
+  font-size: clamp(92px, 17vw, 190px);
+  text-shadow: 0 0 18px #fff2bf, 0 0 65px #f7a737;
+}
+.intro-scene-young-ganesh>p { bottom: 10%; }
+.intro-scene-transformation {
+  background: radial-gradient(ellipse at 50% 48%, #613a19 0%, #1b120d 48%, #100a08 76%);
+  animation-duration: 6s;
+  animation-delay: 16s;
+}
+.transformation-om {
+  color: #ffd873;
+  font-family: Georgia, serif;
+  font-size: clamp(220px, 50vw, 580px);
+  line-height: 1;
+  text-shadow: 0 0 22px #fff1bd, 0 0 85px #ec992d, 0 0 170px #dc6d26;
+  animation: transformation-om-form 6s ease-in-out both;
+}
+.intro-scene-transformation>p { bottom: 11%; }
+.intro-scene-throne {
+  background:
+    linear-gradient(180deg, #160b09a8 0%, #1b0e0980 42%, #100a08b3 100%),
+    url("/images/Ganesha%20beneath%20golden%20temple%20bells.png") center 42% / cover no-repeat,
+    #170d09;
+  animation-duration: 5s;
+  animation-delay: 22s;
+}
+.throne-veil { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 48%, transparent 15%, #1209077a 82%); }
+.temple-bell {
+  position: absolute;
+  top: -8%;
+  width: clamp(38px, 6vw, 74px);
+  height: clamp(68px, 10vw, 120px);
+  border: 1px solid #ffe3a0;
+  border-radius: 42% 42% 18% 18%;
+  background: linear-gradient(90deg, #85551b, #f2cf70 35%, #bd7d28 68%, #ffe6a5);
+  color: #efc96e;
+  text-shadow: 0 0 20px #e8ab43;
+  animation: temple-bell-sway 3s ease-in-out infinite alternate;
+}
+.temple-bell::before {
+  position: absolute;
+  top: -30%;
+  left: 50%;
+  width: 3px;
+  height: 32%;
+  background: #d3a84f;
+  content: "";
+  transform: translateX(-50%);
+}
+.temple-bell::after {
+  position: absolute;
+  bottom: -7px;
+  left: 50%;
+  width: 13px;
+  height: 13px;
+  border: 1px solid #ffe1a0;
+  border-radius: 50%;
+  background: #b2782d;
+  content: "";
+  transform: translateX(-50%);
+}
+.bell-left { left: 12%; }
+.bell-right { right: 12%; animation-delay: -1.6s; }
+.intro-diya {
+  position: absolute;
+  bottom: 13%;
+  width: clamp(34px, 5vw, 58px);
+  height: clamp(16px, 2vw, 24px);
+  border: 1px solid #f4ca67;
+  border-radius: 0 0 50% 50%;
+  background: linear-gradient(180deg, #f4c864, #914a1d);
+  box-shadow: 0 0 24px #ef9f32;
+}
+.intro-diya::before {
+  position: absolute;
+  bottom: 72%;
+  left: 50%;
+  width: 32%;
+  height: 90%;
+  border-radius: 70% 30% 65% 35%;
+  background: radial-gradient(circle at 35% 70%, #fffad4 0%, #ffcf52 35%, #ed7228 100%);
+  box-shadow: 0 0 22px #ffc14c;
+  content: "";
+  transform: translateX(-50%) rotate(45deg);
+}
+.diya-left { left: 8%; }
+.diya-right { right: 8%; }
+.intro-marigolds { position: absolute; right: 0; bottom: 0; left: 0; color: #f2a538; font-size: clamp(18px, 4vw, 46px); text-align: center; text-shadow: 0 0 19px #e17d20; }
+.intro-scene-throne>p { bottom: 12%; }
+.intro-scene-title {
+  z-index: 5;
+  gap: 12px;
+  align-content: center;
+  padding: 24px;
+  background: radial-gradient(ellipse at 50% 45%, #442812 0%, #170f0b 48%, #100a08 82%);
+  text-align: center;
+  animation-duration: 3s;
+  animation-delay: 27s;
+}
+.intro-scene-title>* { position: relative; }
+.intro-scene-title .title-om { color: #efc76f; font-family: Georgia, serif; font-size: clamp(44px, 8vw, 84px); text-shadow: 0 0 28px #d78227; }
+.intro-scene-title strong { color: #f7e7c7; font-size: clamp(16px, 3vw, 27px); letter-spacing: .19em; }
+.intro-scene-title b { color: #f1c261; font-family: var(--font-display), Georgia, serif; font-size: clamp(34px, 7.5vw, 76px); font-weight: 500; letter-spacing: .09em; }
+.intro-scene-title>span:not(.title-om) { color: #f2dfbd; font-family: var(--font-display), Georgia, serif; font-size: clamp(15px, 2vw, 22px); }
+.intro-scene-title small { color: #d7bd91; font-size: clamp(10px, 1.4vw, 14px); letter-spacing: .16em; }
+.hero-intro-controls {
+  position: absolute;
+  z-index: 10;
+  top: max(22px, env(safe-area-inset-top));
+  right: max(22px, env(safe-area-inset-right));
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.hero-intro-skip, .hero-intro-sound {
+  position: static;
+  display: inline-flex;
+  min-height: 40px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid #e8c77a75;
+  border-radius: 22px;
+  background: #160f0bcc;
+  color: #f4dfb6;
+  cursor: pointer;
+  font-size: 11px;
+  backdrop-filter: blur(10px);
+}
+.hero-intro-skip:hover, .hero-intro-sound:hover { background: #42301b; }
+.hero-intro-caption {
+  position: absolute;
+  z-index: 10;
+  right: max(22px, env(safe-area-inset-right));
+  bottom: max(19px, env(safe-area-inset-bottom));
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  color: #e6d0a6;
+  font-size: 8px;
+  letter-spacing: .12em;
+  text-align: right;
+}
+.hero-intro-caption span:last-child { color: #aa967a; font-size: 7px; letter-spacing: .04em; }
+@keyframes intro-scene-reveal {
+  0%, 100% { opacity: 0; }
+  8%, 88% { opacity: 1; }
+}
+@keyframes intro-progress { to { transform: scaleX(1); } }
+@keyframes intro-om-glow { to { transform: scale(1.06); filter: brightness(1.3); } }
+@keyframes kailasa-cloud-drift { to { transform: translateX(10%) scale(1.1); } }
+@keyframes creation-aura-pulse { to { opacity: .58; transform: translate(-50%, -50%) scale(1.12); } }
+@keyframes creation-energy-flow { to { opacity: .35; transform: rotate(5deg) scaleX(.72); } }
+@keyframes transformation-om-form {
+  0% { opacity: 0; transform: scale(.45); filter: blur(18px); }
+  35% { opacity: 1; transform: scale(1); filter: blur(0); }
+  72% { opacity: 1; transform: scale(1.08); }
+  100% { opacity: .68; transform: scale(1.22); }
+}
+@keyframes temple-bell-sway { to { transform: rotate(7deg); } }
+@media (max-width: 600px) {
+  .hero-intro-controls { top: max(16px, env(safe-area-inset-top)); right: 14px; gap: 6px; }
+  .hero-intro-skip, .hero-intro-sound { min-height: 36px; gap: 5px; padding: 0 10px; font-size: 9px; }
+  .hero-intro-caption { right: 15px; bottom: max(16px, env(safe-area-inset-bottom)); }
+  .intro-scene>p { bottom: 15%; width: calc(100% - 32px); }
+  .kailasa-peak { bottom: 22%; height: 52%; }
+  .creation-aura { width: 75vw; }
+  .creation-lotus { top: 59%; }
+  .intro-scene-throne { background-position: center, 54% center, center; }
+  .intro-scene-title { gap: 9px; }
+}
+
+.intro-scene-diya {
+  isolation: isolate;
+  animation-duration: 5s;
+  animation-delay: 0s;
+  background: linear-gradient(180deg, #180e0d 0%, #59301b 54%, #d4772e 100%);
+}
+.colony-street {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background:
+    radial-gradient(ellipse at 50% 88%, #f8b44380 0, transparent 38%),
+    linear-gradient(180deg, #241217 0%, #56291b 55%, #1b120e 100%);
+  animation: diya-street-reveal 5s ease-in-out both;
+}
+.street-home {
+  position: absolute;
+  bottom: 17%;
+  width: 38%;
+  height: 38%;
+  border: 1px solid #e6a14a55;
+  background: linear-gradient(180deg, #6f3928, #281916);
+  box-shadow: inset 0 0 32px #ffb3461f;
+}
+.home-one { left: -7%; clip-path: polygon(0 25%, 51% 0, 100% 24%, 100% 100%, 0 100%); }
+.home-two { right: -7%; height: 46%; clip-path: polygon(0 20%, 47% 0, 100% 22%, 100% 100%, 0 100%); }
+.street-lights {
+  position: absolute;
+  top: 24%;
+  right: 10%;
+  left: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #ffd178, transparent);
+  box-shadow: 0 0 12px #ffc55b;
+}
+.street-lights::before {
+  position: absolute;
+  top: -4px;
+  right: 8%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ffe4a0;
+  box-shadow: -160px 2px 0 #f6c65f, -340px 0 0 #f6c65f, 0 0 19px 6px #f4a22f;
+  content: "";
+}
+.street-rangoli {
+  position: absolute;
+  bottom: 3%;
+  left: 50%;
+  width: min(45vw, 430px);
+  aspect-ratio: 1;
+  border: 2px solid #eac56c;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from 12deg, #c9432380 0deg 8deg, #f3cb7180 8deg 16deg, #176c5380 16deg 24deg) center / 74% 74% no-repeat,
+    radial-gradient(circle, #f9df97 0 3%, transparent 4% 19%, #edbc5d 20% 21%, transparent 22% 32%, #ca4c33 33% 34%, transparent 35%);
+  box-shadow: 0 0 30px #f1bd5670;
+  transform: translateX(-50%);
+}
+.child-diya-scene {
+  position: absolute;
+  z-index: 1;
+  bottom: -7%;
+  left: 50%;
+  width: min(60vw, 610px);
+  height: 91%;
+  transform: translateX(-50%);
+  animation: child-diya-walk 5s ease-in-out both;
+}
+.child-head {
+  position: absolute;
+  top: 5%;
+  left: 50%;
+  width: 25%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 60% 36%, #ffdfa2, #c77843 74%);
+  box-shadow: 0 0 48px #ffc56566;
+  transform: translateX(-50%);
+}
+.child-head::after {
+  position: absolute;
+  top: -3%;
+  right: -6%;
+  left: -6%;
+  height: 39%;
+  border-radius: 70% 70% 15% 15%;
+  background: #271713;
+  content: "";
+  clip-path: polygon(0 60%, 8% 23%, 30% 4%, 62% 0, 100% 34%, 92% 70%, 75% 48%, 52% 40%, 28% 50%, 12% 100%);
+}
+.child-body {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  width: 74%;
+  height: 81%;
+  border-radius: 48% 48% 15% 15%;
+  background: linear-gradient(90deg, #3e2520, #8b4930 45%, #48271c);
+  transform: translateX(-50%);
+  clip-path: polygon(50% 0, 85% 13%, 100% 100%, 0 100%, 15% 13%);
+}
+.child-hand {
+  position: absolute;
+  z-index: 2;
+  top: 43%;
+  width: 24%;
+  height: 8%;
+  border: 1px solid #eac08a;
+  border-radius: 55% 45%;
+  background: linear-gradient(180deg, #eab885, #a96039);
+}
+.hand-left { left: 24%; transform: rotate(25deg); }
+.hand-right { right: 24%; transform: rotate(-25deg); }
+.diya-bowl {
+  position: absolute;
+  z-index: 3;
+  top: 45%;
+  left: 50%;
+  width: 17%;
+  height: 7%;
+  border: 2px solid #ffd77a;
+  border-radius: 0 0 50% 50%;
+  background: linear-gradient(180deg, #e6b44d, #884619);
+  box-shadow: 0 0 25px #ffbc45;
+  transform: translateX(-50%);
+}
+.diya-bowl i { position: absolute; top: -25%; left: 50%; width: 45%; height: 18%; border-radius: 50%; background: #ffebaf; transform: translateX(-50%); }
+.diya-flame {
+  position: absolute;
+  z-index: 4;
+  top: 34%;
+  left: 50%;
+  width: 8%;
+  height: 14%;
+  border-radius: 70% 20% 65% 35%;
+  background: radial-gradient(circle at 55% 70%, #fff8c6 0 18%, #ffc04d 45%, #e86224 100%);
+  filter: drop-shadow(0 0 15px #ffd26d);
+  transform: translateX(-50%) rotate(45deg);
+  animation: diya-flutter .7s ease-in-out infinite alternate;
+}
+.diya-close-glow {
+  position: absolute;
+  z-index: 5;
+  right: 0;
+  bottom: -20%;
+  left: 0;
+  height: 72%;
+  background: radial-gradient(ellipse at 50% 35%, #ffc45436, transparent 55%);
+  pointer-events: none;
+}
+.intro-scene-community {
+  isolation: isolate;
+  background: linear-gradient(180deg, #39211a, #a7562b 59%, #251713);
+  animation-duration: 7s;
+  animation-delay: 5s;
+}
+.community-cut { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0; }
+.community-cut-rangoli { animation: community-cut-rangoli 7s ease-in-out both; }
+.community-cut-garlands { animation: community-cut-garlands 7s ease-in-out both; }
+.community-cut-modaks { animation: community-cut-modaks 7s ease-in-out both; }
+.rangoli-large {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  width: min(51vw, 520px);
+  aspect-ratio: 1;
+  border: 4px solid #f4d184;
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(#c93d2f 0 10deg, #f7d67a 10deg 20deg, #298466 20deg 30deg) center / 82% 82% no-repeat,
+    radial-gradient(circle, #ffe9aa 0 4%, transparent 5% 21%, #ebc162 22% 24%, transparent 25% 44%, #f4d184 45% 47%, transparent 48%);
+  box-shadow: 0 0 35px #ffcd6966;
+  transform: translateX(-50%);
+}
+.community-person {
+  position: absolute;
+  bottom: -3%;
+  width: 20%;
+  height: 58%;
+  border-radius: 48% 48% 12% 12%;
+  background: linear-gradient(90deg, #281817, #71412c 50%, #271616);
+  clip-path: polygon(50% 0, 78% 12%, 100% 100%, 0 100%, 22% 12%);
+}
+.community-person::before {
+  position: absolute;
+  top: -17%;
+  left: 50%;
+  width: 43%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #b77546;
+  content: "";
+  transform: translateX(-50%);
+}
+.person-one { left: 13%; transform: rotate(18deg); }
+.person-two { right: 13%; transform: rotate(-18deg); }
+.garland-string {
+  position: absolute;
+  top: -4%;
+  right: -5%;
+  left: -5%;
+  height: 62%;
+  border-bottom: 4px solid #e8ba5f;
+  border-radius: 0 0 50% 50%;
+  box-shadow: 0 6px 15px #eaa63f69;
+}
+.garland-string::before {
+  position: absolute;
+  right: 0;
+  bottom: -9px;
+  left: 0;
+  height: 27px;
+  background: radial-gradient(ellipse at 13px 10px, #f9a538 0 7px, transparent 8px) 0 0 / 27px 24px repeat-x;
+  content: "";
+}
+.garland-lights {
+  position: absolute;
+  top: 18%;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: #f3cb6e;
+  box-shadow: 0 0 12px #ffd35f;
+}
+.garland-lights::before {
+  position: absolute;
+  top: -4px;
+  left: 8%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff0a8;
+  box-shadow: 115px 0 0 #ffe49a, 230px 0 0 #ffe49a, 345px 0 0 #ffe49a, 460px 0 0 #ffe49a, 0 0 15px 5px #ffb734;
+  content: "";
+}
+.person-lifting { right: 18%; bottom: -8%; width: 18%; height: 50%; }
+.brass-thali {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  display: flex;
+  width: min(32vw, 340px);
+  height: min(32vw, 340px);
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10%;
+  padding-top: 5%;
+  border: 8px solid #e7bb55;
+  border-radius: 50%;
+  background: radial-gradient(circle, #dc9a39, #754219 75%);
+  box-shadow: 0 0 28px #ffca60, inset 0 0 35px #ffdc7f;
+  transform: translateX(-50%);
+}
+.brass-thali i {
+  display: block;
+  width: 19%;
+  aspect-ratio: .82;
+  border-radius: 55% 55% 48% 48%;
+  background: linear-gradient(145deg, #ffe8ad, #d59234 68%, #a34a24);
+  clip-path: polygon(50% 0, 88% 27%, 100% 100%, 0 100%, 12% 27%);
+  filter: drop-shadow(0 0 8px #fff0b0);
+}
+.elder-silhouette {
+  position: absolute;
+  right: 13%;
+  bottom: -4%;
+  width: 18%;
+  height: 46%;
+  border-radius: 48% 48% 10% 10%;
+  background: linear-gradient(90deg, #271a16, #9d6140, #271915);
+}
+.elder-silhouette::before {
+  position: absolute;
+  top: -19%;
+  left: 50%;
+  width: 44%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #bc855b;
+  content: "";
+  transform: translateX(-50%);
+}
+.elder-diya {
+  position: absolute;
+  right: 29%;
+  bottom: 48%;
+  width: 28px;
+  height: 12px;
+  border-radius: 0 0 50% 50%;
+  background: #dfa844;
+  box-shadow: 0 0 24px 12px #f6a63b;
+}
+.elder-diya::before { position: absolute; bottom: 65%; left: 38%; width: 10px; height: 17px; border-radius: 70% 20% 65% 35%; background: #fff0ae; content: ""; transform: rotate(40deg); }
+.intro-scene-darshan {
+  isolation: isolate;
+  background: #1b0e0b;
+  animation-duration: 9s;
+  animation-delay: 12s;
+}
+.darshan-image, .family-darshan-image { position: absolute; inset: 0; background: url("/images/Ganesha%20beneath%20golden%20temple%20bells.png") center 66% / cover no-repeat; }
+.darshan-image { animation: darshan-camera-rise 9s cubic-bezier(.35,.03,.45,1) both; }
+.darshan-haze, .family-haze { position: absolute; inset: 0; background: linear-gradient(180deg, #1a0d0a55, #2d16094d 55%, #120a09bd), radial-gradient(ellipse at 50% 40%, transparent 12%, #130b0ac9 100%); }
+.darshan-haze::before, .family-haze::before {
+  position: absolute;
+  inset: -15%;
+  background: repeating-linear-gradient(105deg, transparent 0 12%, #ffe1a10a 13%, transparent 15% 28%);
+  content: "";
+  filter: blur(18px);
+  animation: incense-drift 8s linear infinite alternate;
+}
+.darshan-offering {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  width: clamp(100px, 17vw, 210px);
+  aspect-ratio: 1;
+  border: 8px solid #e3b751;
+  border-radius: 50%;
+  background: radial-gradient(circle, #d68a2d, #5f311b 67%, transparent 70%);
+  box-shadow: 0 0 30px #ffcf6e99;
+  transform: translateX(-50%);
+  animation: darshan-offering-focus 9s ease both;
+}
+.darshan-lotus {
+  position: absolute;
+  bottom: 11%;
+  left: 50%;
+  width: clamp(110px, 18vw, 220px);
+  height: 90px;
+  background: radial-gradient(ellipse at 50% 95%, #ffcf74 0 9%, transparent 10%), radial-gradient(ellipse at 50% 70%, #d85359 0 11%, transparent 12%), radial-gradient(ellipse at 32% 78%, #ef8390 0 11%, transparent 12%), radial-gradient(ellipse at 68% 78%, #ef8390 0 11%, transparent 12%);
+  filter: drop-shadow(0 0 15px #e96d5b);
+  transform: translateX(-50%);
+  animation: darshan-lotus-reveal 9s ease both;
+}
+.darshan-ornaments {
+  position: absolute;
+  top: 17%;
+  left: 50%;
+  width: min(34vw, 420px);
+  height: 56%;
+  border: 4px solid #f3ca69;
+  border-bottom: 0;
+  border-radius: 48% 48% 0 0;
+  box-shadow: 0 0 24px #e6a431;
+  transform: translateX(-50%);
+  animation: darshan-ornament-reveal 9s ease both;
+}
+.darshan-blessing {
+  position: absolute;
+  top: 34%;
+  right: 22%;
+  width: clamp(40px, 7vw, 78px);
+  aspect-ratio: 1;
+  border: 2px solid #ffe6a4;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffe6a455, transparent 72%);
+  box-shadow: 0 0 28px #ffe4a1;
+  animation: darshan-blessing-reveal 9s ease both;
+}
+.darshan-bells {
+  position: absolute;
+  top: -3%;
+  width: 46px;
+  height: 72px;
+  border-radius: 40% 40% 18% 18%;
+  background: linear-gradient(90deg, #85551b, #f2cf70 35%, #bd7d28 68%, #ffe6a5);
+  box-shadow: 0 0 18px #e8ab43;
+}
+.darshan-bells::before { position: absolute; top: -45%; left: 50%; width: 2px; height: 48%; background: #e6c369; content: ""; transform: translateX(-50%); }
+.darshan-bells::after { position: absolute; bottom: -6px; left: 50%; width: 12px; height: 12px; border-radius: 50%; background: #d39a3c; content: ""; transform: translateX(-50%); }
+.bell-left { left: 12%; }
+.bell-right { right: 12%; }
+.darshan-petals {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: #ffcf67;
+  font-size: clamp(19px, 3vw, 35px);
+  letter-spacing: 12vw;
+  text-shadow: 0 0 16px #fcae42;
+  animation: petal-fall linear 4s infinite;
+}
+.intro-scene-family {
+  isolation: isolate;
+  background: #190e0c;
+  animation-duration: 5s;
+  animation-delay: 21s;
+}
+.family-darshan-image { background-position: center 38%; transform: scale(1.05); }
+.family-haze { background: linear-gradient(90deg, #130b0ac7 0%, #160b0a45 45%, #130b0ac7 100%), linear-gradient(0deg, #110a08 0%, transparent 36%); }
+.family-lineup {
+  position: absolute;
+  z-index: 2;
+  right: 3%;
+  bottom: -9%;
+  left: 3%;
+  display: flex;
+  height: 54%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2%;
+}
+.family-lineup span {
+  position: relative;
+  width: clamp(34px, 7vw, 86px);
+  height: 85%;
+  border-radius: 45% 45% 8% 8%;
+  background: linear-gradient(90deg, #281715, #765039, #251413);
+  clip-path: polygon(50% 0, 78% 12%, 100% 100%, 0 100%, 22% 12%);
+}
+.family-lineup span::before {
+  position: absolute;
+  top: -14%;
+  left: 50%;
+  width: 49%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #bf8960;
+  content: "";
+  transform: translateX(-50%);
+}
+.family-lineup span:nth-child(2n) { height: 96%; background: linear-gradient(90deg, #45221c, #a85b32, #45221c); }
+.family-lineup span:nth-child(3n) { height: 72%; }
+.family-lineup span:nth-child(4) { width: clamp(25px, 4vw, 54px); height: 66%; background: linear-gradient(90deg, #643325, #db9250, #603122); }
+.family-child {
+  position: absolute;
+  z-index: 3;
+  bottom: 23%;
+  left: 50%;
+  width: clamp(10px, 1.7vw, 19px);
+  height: clamp(10px, 1.7vw, 19px);
+  border-radius: 50%;
+  background: #f6ce83;
+  box-shadow: 0 0 24px 12px #ffc452;
+  animation: family-child-look 5s ease-in-out both;
+}
+.family-diya {
+  position: absolute;
+  z-index: 3;
+  bottom: 20%;
+  left: 50%;
+  width: 35px;
+  height: 14px;
+  border-radius: 0 0 50% 50%;
+  background: #d9a13f;
+  box-shadow: 0 0 22px 10px #f9af40;
+}
+.family-diya::before { position: absolute; bottom: 66%; left: 40%; width: 12px; height: 19px; border-radius: 70% 20% 65% 35%; background: #fff2b5; content: ""; transform: rotate(40deg); }
+.intro-scene-title {
+  gap: clamp(12px, 2.5vh, 24px);
+  background: radial-gradient(ellipse at 50% 45%, #b95d20 0%, #7a351b 42%, #3b1a13 83%, #28130f 100%);
+  animation-duration: 4s;
+  animation-delay: 26s;
+}
+.intro-scene-title .title-om {
+  color: #ffe1a0;
+  font-size: clamp(54px, 9vw, 104px);
+  text-shadow: 0 0 22px #fff1bd, 0 0 80px #ffba43;
+}
+.intro-scene-title strong {
+  max-width: 94vw;
+  color: #fff2d6;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(25px, 5.2vw, 65px);
+  font-weight: 600;
+  letter-spacing: .07em;
+  text-shadow: 0 4px 28px #481e11;
+}
+.intro-scene-title>span:not(.title-om) { color: #fff1d2; font-size: clamp(16px, 2.3vw, 25px); }
+.intro-scene-title small { color: #ffe3a2; font-size: clamp(11px, 1.6vw, 16px); letter-spacing: .16em; }
+@keyframes diya-street-reveal {
+  0%, 42% { opacity: 0; }
+  56%, 100% { opacity: 1; }
+}
+@keyframes child-diya-walk {
+  0%, 48% { transform: translateX(-50%) scale(1.35); }
+  100% { transform: translate(-50%, 8%) scale(.78); }
+}
+@keyframes diya-flutter { to { transform: translateX(-50%) rotate(54deg) scale(1.12); } }
+@keyframes community-cut-rangoli {
+  0%, 28% { opacity: 1; }
+  35%, 100% { opacity: 0; }
+}
+@keyframes community-cut-garlands {
+  0%, 31% { opacity: 0; }
+  38%, 60% { opacity: 1; }
+  68%, 100% { opacity: 0; }
+}
+@keyframes community-cut-modaks {
+  0%, 63% { opacity: 0; }
+  70%, 92% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes darshan-camera-rise {
+  0% { background-position: center 92%; transform: scale(1.16); }
+  24% { background-position: center 78%; transform: scale(1.2); }
+  47% { background-position: center 60%; transform: scale(1.25); }
+  70% { background-position: center 42%; transform: scale(1.29); }
+  100% { background-position: center 22%; transform: scale(1.34); }
+}
+@keyframes darshan-offering-focus {
+  0%, 18% { opacity: 1; transform: translateX(-50%) scale(1); }
+  28%, 100% { opacity: 0; transform: translateX(-50%) scale(.72); }
+}
+@keyframes darshan-lotus-reveal {
+  0%, 20% { opacity: 0; transform: translateX(-50%) scale(.72); }
+  30%, 43% { opacity: 1; transform: translateX(-50%) scale(1); }
+  51%, 100% { opacity: 0; }
+}
+@keyframes darshan-ornament-reveal {
+  0%, 42% { opacity: 0; transform: translateX(-50%) scale(.85); }
+  52%, 67% { opacity: 1; transform: translateX(-50%) scale(1); }
+  75%, 100% { opacity: 0; }
+}
+@keyframes darshan-blessing-reveal {
+  0%, 64% { opacity: 0; transform: scale(.65); }
+  74%, 94% { opacity: 1; transform: scale(1.12); }
+  100% { opacity: .7; transform: scale(1); }
+}
+@keyframes incense-drift { to { transform: translate3d(5%, -4%, 0) rotate(4deg); opacity: .45; } }
+@keyframes family-child-look {
+  0%, 48% { transform: translate(-20px, 10px); }
+  100% { transform: translate(20px, -2px); }
+}
+@media (max-width: 600px) {
+  .street-rangoli { width: 62vw; }
+  .child-diya-scene { width: min(87vw, 500px); }
+  .child-head { width: 29%; }
+  .child-body { top: 28%; width: 86%; height: 78%; }
+  .child-hand { width: 27%; }
+  .hand-left { left: 20%; }
+  .hand-right { right: 20%; }
+  .brass-thali { width: 45vw; height: 45vw; }
+  .elder-silhouette { right: 5%; }
+  .elder-diya { right: 19%; }
+  .darshan-image { background-position: center 61%; }
+  .darshan-bells { width: 32px; height: 54px; }
+  .family-lineup { gap: 1%; }
+  .family-lineup span { width: 8vw; }
+  .intro-scene-title { gap: 12px; }
+}
+.intro-scene-hyderabad {
+  isolation: isolate;
+  background: linear-gradient(180deg, #391d27 0%, #bd6436 51%, #f0ad55 100%);
+  animation-duration: 3s;
+  animation-delay: 0s;
+}
+.hyderabad-skyline { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(ellipse at 50% 63%, #ffd78388, transparent 38%); }
+.city-sunset {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  width: clamp(72px, 13vw, 160px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff5c3 0%, #ffd16b 50%, #f49b3f 75%, transparent 76%);
+  filter: drop-shadow(0 0 42px #ffc55b);
+  transform: translateX(-50%);
+}
+.city-buildings {
+  position: absolute;
+  right: 0;
+  bottom: 12%;
+  left: 0;
+  height: 34%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 18px, #f3bf6350 19px 22px, transparent 23px 36px) 0 52% / 100% 42% no-repeat,
+    linear-gradient(180deg, #6c3a2c, #2c1919);
+  clip-path: polygon(0 35%, 8% 35%, 8% 17%, 15% 17%, 15% 46%, 23% 46%, 23% 26%, 31% 26%, 31% 44%, 41% 44%, 41% 10%, 49% 10%, 49% 37%, 58% 37%, 58% 19%, 67% 19%, 67% 48%, 77% 48%, 77% 25%, 86% 25%, 86% 39%, 94% 39%, 94% 13%, 100% 13%, 100% 100%, 0 100%);
+}
+.charminar {
+  position: absolute;
+  bottom: 13%;
+  left: 50%;
+  width: clamp(150px, 28vw, 330px);
+  height: 42%;
+  filter: drop-shadow(0 0 20px #ffcd73);
+  transform: translateX(-50%);
+}
+.charminar-body {
+  position: absolute;
+  bottom: 13%;
+  left: 17%;
+  width: 66%;
+  height: 50%;
+  border: 2px solid #f4cb83;
+  background:
+    radial-gradient(ellipse at 50% 100%, #2c1719 0 19%, transparent 20%),
+    repeating-linear-gradient(90deg, transparent 0 18%, #f8d99a 19% 20%, transparent 21% 39%),
+    linear-gradient(90deg, #995532, #f4bc62 50%, #995532);
+  clip-path: polygon(0 19%, 50% 0, 100% 19%, 100% 100%, 0 100%);
+}
+.charminar-tower {
+  position: absolute;
+  z-index: 1;
+  bottom: 32%;
+  width: 17%;
+  height: 68%;
+  border: 2px solid #f7d693;
+  border-radius: 38% 38% 3px 3px;
+  background: linear-gradient(90deg, #a95f35, #f6c875 48%, #9a4f30);
+}
+.charminar-tower::before {
+  position: absolute;
+  top: -18%;
+  left: -12%;
+  width: 124%;
+  height: 24%;
+  border: 2px solid #ffdfa0;
+  border-radius: 50% 50% 10% 10%;
+  background: radial-gradient(ellipse, #ffe6a4 0 12%, #d99242 14% 55%, #8f472b 58%);
+  content: "";
+}
+.charminar-tower::after {
+  position: absolute;
+  top: 29%;
+  right: 27%;
+  bottom: 0;
+  left: 27%;
+  border: 1px solid #f8d798;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+  content: "";
+}
+.tower-west { left: 8%; }
+.tower-east { right: 8%; }
+.charminar-arch {
+  position: absolute;
+  z-index: 2;
+  bottom: 13%;
+  left: 40%;
+  width: 20%;
+  height: 28%;
+  border: 3px solid #ffe2a0;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+  background: #281817;
+}
+.city-lights {
+  position: absolute;
+  right: 0;
+  bottom: 12%;
+  left: 0;
+  height: 2px;
+  background: #ffd879;
+  box-shadow: 0 0 16px 3px #ffd879;
+}
+.city-label {
+  position: absolute;
+  bottom: 5%;
+  left: 50%;
+  color: #ffe3a2;
+  font-size: 10px;
+  letter-spacing: .45em;
+  text-shadow: 0 0 15px #ffb94b;
+  transform: translateX(-50%);
+}
+.intro-scene-diya {
+  z-index: 3;
+  background: linear-gradient(180deg, #281719, #a8522e 59%, #251713);
+  animation-duration: 4s;
+  animation-delay: 3s;
+}
+.colony-street { animation-duration: 4s; }
+.child-diya-scene { animation-duration: 4s; }
+.street-garland {
+  position: absolute;
+  top: 9%;
+  right: -5%;
+  left: -5%;
+  height: 28%;
+  border-bottom: 3px solid #f2c56a;
+  border-radius: 0 0 50% 50%;
+  background: radial-gradient(circle, #ffdb82 0 3px, transparent 4px) 0 100% / 32px 32px repeat-x;
+  filter: drop-shadow(0 0 12px #f4a83f);
+}
+.intro-scene-diya>p,
+.intro-scene-community>p,
+.intro-scene-neighborhood-om>p,
+.intro-scene-manifestation>p,
+.intro-scene-darshan>p,
+.intro-scene-family>p {
+  z-index: 8;
+  bottom: max(34px, 6vh);
+  width: calc(100% - 32px);
+  color: #fff0cf;
+  font-size: clamp(13px, 2vw, 20px);
+  letter-spacing: .1em;
+  text-shadow: 0 2px 20px #1a0907;
+}
+.intro-scene-community {
+  z-index: 2;
+  background: transparent;
+  animation-duration: 4s;
+  animation-delay: 3s;
+}
+.community-cut-rangoli { animation-duration: 4s; }
+.community-cut-garlands { animation-duration: 4s; }
+.community-cut-modaks { animation-duration: 4s; }
+.intro-scene-community>p { display: none; }
+.intro-scene-neighborhood-om {
+  isolation: isolate;
+  background: linear-gradient(180deg, #26151c 0%, #833d2c 61%, #e68e3b 100%);
+  animation-duration: 5s;
+  animation-delay: 7s;
+}
+.neighborhood-homes {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(0deg, #291817 0 23%, transparent 23%),
+    linear-gradient(90deg, #3e211f 0 16%, transparent 16% 84%, #442321 84%),
+    radial-gradient(ellipse at 50% 54%, #ffcf6b55, transparent 46%);
+}
+.neighborhood-homes::before,
+.neighborhood-homes::after {
+  position: absolute;
+  bottom: 17%;
+  width: 30%;
+  height: 31%;
+  border: 1px solid #e8ad5a55;
+  background: repeating-linear-gradient(90deg, transparent 0 28px, #ffc45a55 29px 33px);
+  clip-path: polygon(0 24%, 50% 0, 100% 24%, 100% 100%, 0 100%);
+  content: "";
+}
+.neighborhood-homes::before { left: -5%; }
+.neighborhood-homes::after { right: -5%; }
+.neighborhood-om {
+  position: absolute;
+  top: 13%;
+  left: 50%;
+  color: #fff0ad;
+  font-family: Georgia, serif;
+  font-size: clamp(130px, 28vw, 330px);
+  line-height: 1;
+  text-shadow: 0 0 20px #fff3bd, 0 0 72px #ffbd4b, 0 0 140px #e66c2c;
+  transform: translateX(-50%);
+  animation: neighborhood-om-glow 2.5s ease-in-out infinite alternate;
+}
+.neighborhood-lookers {
+  position: absolute;
+  z-index: 2;
+  right: 5%;
+  bottom: -7%;
+  left: 5%;
+  display: flex;
+  height: 30%;
+  align-items: flex-end;
+  justify-content: center;
+  gap: clamp(14px, 5vw, 58px);
+}
+.neighborhood-lookers span {
+  position: relative;
+  width: clamp(24px, 5vw, 56px);
+  height: 65%;
+  border-radius: 45% 45% 0 0;
+  background: linear-gradient(90deg, #211412, #63301d, #211412);
+  clip-path: polygon(50% 0, 76% 18%, 100% 100%, 0 100%, 24% 18%);
+}
+.neighborhood-lookers span::before {
+  position: absolute;
+  top: -27%;
+  left: 50%;
+  width: 46%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #c17a4c;
+  content: "";
+  transform: translateX(-50%);
+}
+.neighborhood-petals {
+  position: absolute;
+  inset: 0;
+  color: #ffcd68;
+  font-size: clamp(20px, 4vw, 40px);
+  letter-spacing: 12vw;
+  text-shadow: 0 0 14px #ffae46;
+  animation: petal-fall linear 5s infinite;
+}
+.intro-scene-manifestation {
+  isolation: isolate;
+  background: radial-gradient(ellipse at 50% 47%, #96552b, #381b16 48%, #130b0a 100%);
+  animation-duration: 6s;
+  animation-delay: 12s;
+}
+.manifestation-pandal {
+  position: absolute;
+  top: 9%;
+  left: 50%;
+  width: min(68vw, 720px);
+  height: 86%;
+  border: 3px solid #edc66d;
+  border-bottom: 0;
+  border-radius: 48% 48% 0 0;
+  background: repeating-radial-gradient(ellipse at 50% 0, transparent 0 22px, #ffd36d30 23px 25px, transparent 26px 43px);
+  box-shadow: 0 0 30px #f6b94a77, inset 0 0 45px #f6b94a30;
+  transform: translateX(-50%);
+  animation: manifestation-pandal-glow 2.5s ease-in-out infinite alternate;
+}
+.manifestation-aura {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  width: min(48vw, 500px);
+  aspect-ratio: 1;
+  border: 1px solid #ffedb7;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff3c780 0%, #f9b94e35 29%, transparent 70%);
+  box-shadow: 0 0 90px #ffc34b, inset 0 0 55px #ffcf62;
+  transform: translate(-50%, -50%);
+  animation: manifestation-aura 6s ease-in-out both;
+}
+.manifestation-idol {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #190d0b32, #140a08aa),
+    url("/images/Ganesha%20beneath%20golden%20temple%20bells.png") center 48% / contain no-repeat;
+  opacity: 0;
+  transform: scale(.93);
+  animation: manifestation-form 6s ease-out both;
+}
+.manifestation-energy {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.manifestation-energy i {
+  position: absolute;
+  top: -12%;
+  width: 2px;
+  height: 30%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, transparent, #fff2bd, #ffad3f, transparent);
+  box-shadow: 0 0 15px 3px #ffbd4b;
+  opacity: 0;
+  animation: energy-descend 2.2s ease-in infinite;
+}
+.manifestation-energy i:nth-child(1) { left: 19%; animation-delay: .1s; }
+.manifestation-energy i:nth-child(2) { left: 28%; animation-delay: .8s; }
+.manifestation-energy i:nth-child(3) { left: 37%; animation-delay: .4s; }
+.manifestation-energy i:nth-child(4) { left: 46%; animation-delay: 1.1s; }
+.manifestation-energy i:nth-child(5) { left: 55%; animation-delay: .6s; }
+.manifestation-energy i:nth-child(6) { left: 64%; animation-delay: .2s; }
+.manifestation-energy i:nth-child(7) { left: 73%; animation-delay: .9s; }
+.manifestation-energy i:nth-child(8) { left: 82%; animation-delay: .5s; }
+.manifestation-lotus {
+  position: absolute;
+  z-index: 2;
+  bottom: 12%;
+  left: 50%;
+  color: #f7a5a1;
+  font-size: clamp(30px, 6vw, 70px);
+  letter-spacing: .25em;
+  text-shadow: 0 0 20px #f88169;
+  transform: translateX(-50%);
+  animation: lotus-arrive 6s ease-out both;
+}
+.intro-scene-darshan {
+  animation-duration: 6s;
+  animation-delay: 18s;
+}
+.darshan-image,
+.darshan-offering,
+.darshan-lotus,
+.darshan-ornaments,
+.darshan-blessing { animation-duration: 6s; }
+.darshan-petals { animation-duration: 2.8s; }
+.intro-scene-family {
+  animation-duration: 3s;
+  animation-delay: 24s;
+}
+.family-darshan-image { animation: family-camera-hold 3s ease both; }
+.intro-scene-title {
+  background: radial-gradient(ellipse at 50% 45%, #bb6124 0%, #7d351a 44%, #351711 100%);
+  animation-duration: 3s;
+  animation-delay: 27s;
+}
+.intro-scene-title em {
+  color: #ffe4a3;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(15px, 2vw, 22px);
+  font-style: normal;
+  letter-spacing: .08em;
+  text-shadow: 0 0 18px #ffbb4a;
+}
+@keyframes neighborhood-om-glow { to { filter: brightness(1.3); transform: translateX(-50%) scale(1.04); } }
+@keyframes manifestation-pandal-glow { to { box-shadow: 0 0 55px #f6b94aaa, inset 0 0 65px #f6b94a55; } }
+@keyframes manifestation-aura {
+  0% { opacity: 0; transform: translate(-50%, -38%) scale(.6); }
+  48% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  100% { opacity: .6; transform: translate(-50%, -54%) scale(1.24); }
+}
+@keyframes manifestation-form {
+  0%, 30% { opacity: 0; filter: blur(15px); transform: scale(.93); }
+  100% { opacity: .82; filter: blur(0); transform: scale(1.03); }
+}
+@keyframes energy-descend {
+  0% { opacity: 0; transform: translateY(0) scaleY(.5); }
+  15% { opacity: .95; }
+  100% { opacity: 0; transform: translateY(120vh) scaleY(1.5); }
+}
+@keyframes lotus-arrive {
+  0%, 24% { opacity: 0; transform: translate(-50%, 35px) scale(.65); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+@keyframes family-camera-hold {
+  0% { opacity: .2; transform: scale(1.13); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+@media (max-width: 600px) {
+  .charminar { width: min(48vw, 250px); height: 35%; }
+  .city-buildings { height: 29%; }
+  .intro-scene-community { display: none; }
+  .manifestation-pandal { width: 88vw; }
+  .manifestation-idol { background-position: center 50%; background-size: 115% auto; }
+  .manifestation-aura { width: 72vw; }
+  .intro-scene-title strong { font-size: clamp(20px, 6vw, 34px); letter-spacing: .045em; }
+  .intro-scene-title>span:not(.title-om) { font-size: clamp(13px, 3.8vw, 18px); }
+  .intro-scene-title small { font-size: 10px; letter-spacing: .1em; }
+}
+.intro-scene-om {
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 50% 50%, #152c4b 0%, #091528 48%, #050912 100%);
+  animation-duration: 4s;
+  animation-delay: 0s;
+}
+.cosmic-universe { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(circle at 50% 48%, #f5ac4430, transparent 34%); }
+.cosmic-galaxy {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(82vw, 850px);
+  aspect-ratio: 1;
+  border: 1px solid #e8c27023;
+  border-radius: 50%;
+  background: repeating-radial-gradient(ellipse at 50% 50%, transparent 0 15px, #96b9e414 16px 17px, transparent 18px 34px);
+  filter: drop-shadow(0 0 30px #5089c033);
+  transform: translate(-50%, -50%) rotate(-24deg) scaleY(.47);
+  animation: cosmic-galaxy-drift 16s linear infinite;
+}
+.galaxy-two {
+  width: min(62vw, 660px);
+  border-color: #efc96b18;
+  transform: translate(-50%, -50%) rotate(46deg) scaleY(.4);
+  animation-direction: reverse;
+}
+.cosmic-nebula {
+  position: absolute;
+  inset: -10%;
+  background:
+    radial-gradient(ellipse at 30% 42%, #31609b2b, transparent 33%),
+    radial-gradient(ellipse at 72% 58%, #b26e2b20, transparent 35%);
+  filter: blur(28px);
+}
+.intro-scene-om .intro-om {
+  position: relative;
+  z-index: 1;
+  color: #fff0b0;
+  font-size: clamp(190px, 42vw, 500px);
+  text-shadow: 0 0 20px #fff2bd, 0 0 80px #ffbd4b, 0 0 155px #da7b29;
+  animation: cosmic-om-emerge 4s ease both, intro-om-glow 2.4s ease-in-out 1.2s infinite alternate;
+}
+.intro-scene-kailasa {
+  animation-duration: 4s;
+  animation-delay: 4s;
+  background: linear-gradient(180deg, #25344d 0%, #7890a0 39%, #e8b26a 72%, #f9d79b 100%);
+}
+.kailasa-sun { top: 23%; width: min(25vw, 250px); }
+.kailasa-peak-back { background: linear-gradient(145deg, #f8f2e5, #9fb6bf 76%); opacity: .9; }
+.kailasa-peak-mid { background: linear-gradient(160deg, #e6e2d4, #718895 76%); }
+.kailasa-peak-front { background: linear-gradient(180deg, #c0c6c1, #4a5860); }
+.kailasa-cloud { background: #fff0d15e; }
+.parvati-silhouette {
+  z-index: 2;
+  top: 57%;
+  left: 50%;
+  width: clamp(86px, 13vw, 150px);
+  height: clamp(168px, 26vw, 270px);
+  filter: drop-shadow(0 0 22px #ffc967);
+  animation: parvati-meditate 4s ease-in-out both;
+}
+.parvati-silhouette i {
+  top: 37%;
+  right: 4%;
+  bottom: 0;
+  left: 4%;
+  border-radius: 48% 48% 10% 10%;
+  background: linear-gradient(120deg, #f5c46e, #82452e 60%, #e3aa5b);
+  clip-path: polygon(50% 0, 76% 10%, 100% 100%, 0 100%, 24% 10%);
+}
+.parvati-lotus {
+  position: absolute;
+  bottom: -7%;
+  left: 50%;
+  width: 110%;
+  height: 24%;
+  border: 1px solid #ffe4a0;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #ffe5a0 0 4%, #cf7442 7% 45%, #64372c 72%);
+  box-shadow: 0 0 22px #f4bd60;
+  transform: translateX(-50%);
+}
+.parvati-hands {
+  position: absolute;
+  z-index: 2;
+  top: 47%;
+  left: 50%;
+  width: 52%;
+  height: 10%;
+  border-top: 5px solid #edc17a;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+.creation-hands { top: 54%; border-color: #ffe2a0; }
+.kailasa-petals {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  color: #fff1d2;
+  font-size: clamp(20px, 3vw, 35px);
+  letter-spacing: 12vw;
+  text-shadow: 0 0 14px #ffe4a2;
+  animation: kailasa-petals-float 4s ease-in-out infinite alternate;
+}
+.intro-scene-creation {
+  animation-duration: 5s;
+  animation-delay: 8s;
+  background:
+    radial-gradient(ellipse at 50% 54%, #28405f 0%, #142238 46%, #080e19 100%);
+}
+.creation-aura { top: 48%; width: min(56vw, 560px); }
+.creation-child {
+  z-index: 3;
+  top: 42%;
+  width: clamp(58px, 9vw, 104px);
+  background: radial-gradient(circle at 34% 30%, #fff8da, #f3bd55 45%, #a34a19 100%);
+  animation: creation-child-arrive 5s ease-out both;
+}
+.creation-child i {
+  position: absolute;
+  top: 44%;
+  left: 67%;
+  width: 12%;
+  height: 4%;
+  border-radius: 50%;
+  background: #60331f;
+  box-shadow: 0 0 9px #fff0b0;
+  animation: child-opens-eyes 5s ease both;
+}
+.creation-energy { z-index: 2; top: 50%; width: 32%; height: 3px; }
+.energy-left { transform: rotate(-17deg); }
+.energy-right { left: 43%; transform: rotate(17deg); animation-delay: -.6s; }
+.creation-lotus { top: 63%; z-index: 1; }
+.creation-sparkles {
+  position: absolute;
+  z-index: 4;
+  top: 31%;
+  left: 50%;
+  color: #fff1ba;
+  font-size: clamp(17px, 3vw, 30px);
+  letter-spacing: 3vw;
+  text-shadow: 0 0 16px #ffcf69;
+  transform: translateX(-50%);
+  animation: creation-sparkle-drift 2.5s ease-in-out infinite alternate;
+}
+.intro-scene-garden {
+  isolation: isolate;
+  animation-duration: 5s;
+  animation-delay: 13s;
+  background: linear-gradient(180deg, #193654 0%, #55718b 46%, #cf9861 78%, #493329 100%);
+}
+.garden-sky {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 50% 40%, #ffe1a055, transparent 35%),
+    radial-gradient(ellipse at 50% 100%, #edb266 0%, transparent 57%);
+}
+.garden-om {
+  position: absolute;
+  top: 1%;
+  left: 50%;
+  color: #ffeda9;
+  font-family: Georgia, serif;
+  font-size: clamp(150px, 32vw, 370px);
+  line-height: 1;
+  text-shadow: 0 0 25px #fff0b6, 0 0 105px #ffbe4a;
+  transform: translateX(-50%);
+  animation: garden-om-glow 2.5s ease-in-out infinite alternate;
+}
+.garden-trees {
+  position: absolute;
+  right: 0;
+  bottom: 14%;
+  left: 0;
+  height: 40%;
+  background:
+    radial-gradient(ellipse at 6% 33%, #173c38 0 14%, transparent 15%),
+    radial-gradient(ellipse at 16% 22%, #215248 0 13%, transparent 14%),
+    radial-gradient(ellipse at 88% 26%, #17443d 0 17%, transparent 18%),
+    radial-gradient(ellipse at 99% 38%, #295e4d 0 14%, transparent 15%),
+    linear-gradient(0deg, #37251f 0 19%, transparent 20%);
+}
+.garden-pond {
+  position: absolute;
+  right: 0;
+  bottom: 8%;
+  left: 0;
+  height: 17%;
+  background: repeating-linear-gradient(175deg, transparent 0 14px, #ffe1a433 15px 16px, transparent 17px 30px), #364e56ad;
+}
+.garden-lotus {
+  position: absolute;
+  z-index: 2;
+  bottom: 17%;
+  width: clamp(42px, 8vw, 90px);
+  height: clamp(27px, 4vw, 48px);
+  border-radius: 50% 50% 10% 10%;
+  background:
+    radial-gradient(ellipse at 50% 100%, #ffd872 0 9%, transparent 10%),
+    radial-gradient(ellipse at 50% 75%, #ffb6b0 0 19%, transparent 20%),
+    radial-gradient(ellipse at 25% 80%, #f48089 0 17%, transparent 18%),
+    radial-gradient(ellipse at 75% 80%, #f48089 0 17%, transparent 18%);
+  filter: drop-shadow(0 0 12px #fb9b83);
+  animation: lotus-bloom 5s ease both;
+}
+.lotus-one { left: 15%; }
+.lotus-two { right: 17%; bottom: 20%; animation-delay: .5s; }
+.lotus-three { bottom: 13%; left: 47%; animation-delay: 1s; }
+.garden-peacock {
+  position: absolute;
+  z-index: 2;
+  bottom: 21%;
+  width: clamp(76px, 12vw, 135px);
+  height: clamp(115px, 20vw, 220px);
+  animation: peacock-step 5s ease-in-out infinite alternate;
+}
+.peacock-left { left: 13%; }
+.peacock-right { right: 13%; transform: scaleX(-1); animation-delay: -.7s; }
+.garden-peacock i {
+  position: absolute;
+  bottom: 21%;
+  left: 0;
+  width: 100%;
+  height: 76%;
+  border-radius: 50% 50% 10% 10%;
+  background: repeating-radial-gradient(ellipse at 50% 85%, #f4cf67 0 3px, #168b83 5px 10px, #173b58 13px 18px, transparent 21px 26px);
+  clip-path: polygon(50% 0, 65% 15%, 78% 6%, 88% 27%, 100% 40%, 90% 62%, 78% 52%, 69% 81%, 50% 65%, 31% 81%, 22% 52%, 10% 62%, 0 40%, 12% 27%, 22% 6%, 35% 15%);
+  filter: drop-shadow(0 0 12px #72c6aa);
+}
+.garden-peacock b {
+  position: absolute;
+  z-index: 1;
+  right: 39%;
+  bottom: 0;
+  width: 23%;
+  height: 42%;
+  border-radius: 50% 50% 34% 34%;
+  background: linear-gradient(90deg, #126b6b, #5bc4a7 50%, #124b63);
+}
+.garden-peacock b::before {
+  position: absolute;
+  top: -19%;
+  left: 50%;
+  width: 54%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #39a18e;
+  content: "";
+  transform: translateX(-50%);
+}
+.heavenly-child {
+  position: absolute;
+  z-index: 4;
+  bottom: 14%;
+  left: 50%;
+  width: clamp(95px, 15vw, 180px);
+  height: 56%;
+  filter: drop-shadow(0 0 22px #ffd879);
+  transform: translateX(-50%);
+  animation: heavenly-child-walk 5s ease-in-out both;
+}
+.heavenly-child-head {
+  position: absolute;
+  top: 11%;
+  left: 50%;
+  width: 31%;
+  aspect-ratio: 1;
+  border: 2px solid #ffe2a0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff1ce, #d5854c 75%);
+  box-shadow: 0 0 24px #ffc85c;
+  transform: translateX(-50%);
+}
+.heavenly-child-head::after {
+  position: absolute;
+  top: -7%;
+  right: -8%;
+  left: -8%;
+  height: 34%;
+  border-radius: 50% 50% 0 0;
+  background: #30201f;
+  content: "";
+}
+.heavenly-child-body {
+  position: absolute;
+  top: 38%;
+  left: 50%;
+  width: 77%;
+  height: 68%;
+  border-radius: 50% 50% 10% 10%;
+  background: linear-gradient(90deg, #8b4930, #f0bf6c 48%, #a75632);
+  clip-path: polygon(50% 0, 85% 12%, 100% 100%, 0 100%, 15% 12%);
+  transform: translateX(-50%);
+}
+.heavenly-child-aura {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid #ffe4a5aa;
+  border-radius: 50%;
+  box-shadow: 0 0 48px #ffc456;
+  transform: translateX(-50%);
+}
+.garden-particles {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  color: #fff1b7;
+  font-size: clamp(17px, 3vw, 30px);
+  letter-spacing: 11vw;
+  text-shadow: 0 0 15px #ffd46b;
+  animation: garden-particles-float 3s ease-in-out infinite alternate;
+}
+.intro-scene-transformation {
+  animation-duration: 6s;
+  animation-delay: 18s;
+  background: radial-gradient(ellipse at 50% 47%, #223d5d 0%, #142238 45%, #060c17 100%);
+}
+.intro-scene-transformation .transformation-om {
+  position: absolute;
+  top: 4%;
+  z-index: 1;
+  font-size: clamp(200px, 48vw, 570px);
+}
+.transformation-aura {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: min(48vw, 520px);
+  aspect-ratio: 1;
+  border: 1px solid #fff0b4;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff1b87c 0%, #ffd35a31 37%, transparent 71%);
+  box-shadow: 0 0 90px #ffc44d, inset 0 0 50px #ffe08b;
+  transform: translate(-50%, -50%);
+  animation: transformation-aura-bloom 6s ease both;
+}
+.transformation-energy {
+  position: absolute;
+  z-index: 3;
+  top: 48%;
+  left: 50%;
+  color: #fff0b4;
+  font-size: clamp(30px, 7vw, 76px);
+  letter-spacing: 2vw;
+  text-shadow: 0 0 24px #ffd05e;
+  transform: translateX(-50%);
+  animation: transformation-sparks 6s ease both;
+}
+.transformation-idol {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #101c2a15 0%, #080c18a6 100%),
+    url("/images/Ganesha%20beneath%20golden%20temple%20bells.png") center 48% / contain no-repeat;
+  opacity: 0;
+  filter: blur(14px);
+  transform: scale(.92);
+  animation: divine-form-reveal 6s ease-out both;
+}
+.intro-scene-throne {
+  animation-name: intro-scene-reveal, throne-camera-rise;
+  animation-duration: 3s, 3s;
+  animation-delay: 24s, 24s;
+  animation-timing-function: ease-in-out, ease-in-out;
+  animation-fill-mode: both, both;
+}
+.intro-scene-throne .throne-veil {
+  background: linear-gradient(180deg, #08101b33 0%, transparent 44%, #130b08a8 100%), radial-gradient(ellipse at 50% 45%, transparent 20%, #1209077a 83%);
+}
+.throne-petals {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  overflow: hidden;
+  color: #ffdfa0;
+  font-size: clamp(18px, 3vw, 34px);
+  letter-spacing: 10vw;
+  text-shadow: 0 0 16px #ffc658;
+  animation: petal-fall linear 2.5s infinite;
+}
+.intro-scene-title {
+  animation-duration: 3s;
+  animation-delay: 27s;
+  background: radial-gradient(ellipse at 50% 45%, #d17a32 0%, #8f421f 46%, #4a2015 100%);
+}
+@keyframes cosmic-galaxy-drift { to { transform: translate(-50%, -50%) rotate(336deg) scaleY(.47); } }
+@keyframes cosmic-om-emerge {
+  0% { opacity: 0; transform: scale(.62); filter: blur(22px); }
+  65% { opacity: 1; transform: scale(1.04); filter: blur(0); }
+  100% { opacity: 1; transform: scale(1); filter: blur(0); }
+}
+@keyframes parvati-meditate { 0%, 100% { transform: translate(-50%, -50%) translateY(0); } 50% { transform: translate(-50%, -50%) translateY(-5px); } }
+@keyframes kailasa-petals-float { to { transform: translate3d(-12px, 18px, 0) rotate(12deg); opacity: .55; } }
+@keyframes creation-child-arrive {
+  0%, 35% { opacity: 0; transform: translate(-50%, 44px) scale(.5); filter: blur(12px); }
+  100% { opacity: 1; transform: translate(-50%, 0) scale(1); filter: blur(0); }
+}
+@keyframes child-opens-eyes { 0%, 74% { opacity: 0; } 86%, 100% { opacity: 1; } }
+@keyframes creation-sparkle-drift { to { opacity: .45; transform: translate(-50%, -18px) scale(1.14); } }
+@keyframes garden-om-glow { to { filter: brightness(1.35); transform: translateX(-50%) scale(1.05); } }
+@keyframes lotus-bloom { 0%, 35% { opacity: 0; transform: scale(.55); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes peacock-step { to { margin-bottom: 5px; } }
+@keyframes heavenly-child-walk {
+  0% { transform: translateX(calc(-50% - 25px)); }
+  50% { transform: translateX(calc(-50% + 28px)); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes garden-particles-float { to { transform: translate3d(0, -18px, 0); opacity: .55; } }
+@keyframes transformation-aura-bloom {
+  0% { opacity: 0; transform: translate(-50%, -42%) scale(.58); }
+  45% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+  100% { opacity: .68; transform: translate(-50%, -54%) scale(1.2); }
+}
+@keyframes transformation-sparks {
+  0%, 52% { opacity: 0; transform: translateX(-50%) scale(.65); }
+  100% { opacity: .9; transform: translateX(-50%) scale(1.2); }
+}
+@keyframes divine-form-reveal {
+  0%, 34% { opacity: 0; filter: blur(14px); transform: scale(.92); }
+  100% { opacity: 1; filter: blur(0); transform: scale(1.04); }
+}
+@keyframes throne-camera-rise {
+  0% { background-position: center top, center 58%; }
+  100% { background-position: center bottom, center 28%; }
+}
+@media (max-width: 600px) {
+  .intro-scene-om .intro-om { font-size: clamp(170px, 55vw, 300px); }
+  .parvati-silhouette { width: 90px; height: 175px; }
+  .creation-aura { width: 76vw; }
+  .garden-peacock { bottom: 22%; width: 72px; height: 125px; }
+  .peacock-left { left: 2%; }
+  .peacock-right { right: 2%; }
+  .heavenly-child { width: 105px; height: 50%; }
+  .intro-scene-transformation .transformation-om { font-size: 62vw; }
+  .transformation-aura { width: 72vw; }
+  .transformation-idol { background-size: 115% auto; }
+  .intro-scene-throne { background-position: center, center 42%; }
+  .intro-scene-title strong { font-size: clamp(20px, 6vw, 34px); letter-spacing: .045em; }
+  .intro-scene-title>span:not(.title-om) { font-size: clamp(13px, 3.8vw, 18px); }
+  .intro-scene-title small { font-size: 10px; letter-spacing: .1em; }
+}
+.intro-scene-kailasa {
+  animation-duration: 4s;
+  animation-delay: 0s;
+  background: linear-gradient(180deg, #25344d 0%, #7890a0 39%, #e8b26a 72%, #f9d79b 100%);
+}
+.intro-scene-kailasa .kailasa-sun { top: 23%; }
+.intro-scene-kailasa .kailasa-peak-back { background: linear-gradient(145deg, #f8f2e5, #9fb6bf 76%); opacity: .9; }
+.intro-scene-kailasa .kailasa-peak-mid { background: linear-gradient(160deg, #e6e2d4, #718895 76%); }
+.intro-scene-kailasa .kailasa-peak-front { background: linear-gradient(180deg, #c0c6c1, #4a5860); }
+.intro-scene-kailasa .parvati-meditating {
+  top: 59%;
+  animation: parvati-meditate 4s ease-in-out infinite;
+}
+.kailasa-diya {
+  position: absolute;
+  z-index: 4;
+  right: 12%;
+  bottom: 11%;
+  width: 42px;
+  height: 20px;
+  border: 1px solid #f4ca67;
+  border-radius: 0 0 50% 50%;
+  background: linear-gradient(180deg, #f4c864, #914a1d);
+  box-shadow: 0 0 26px 8px #ffc14c;
+  animation: diya-dissolve 1.2s ease-out 2.8s both;
+}
+.kailasa-diya::before {
+  position: absolute;
+  bottom: 72%;
+  left: 50%;
+  width: 12px;
+  height: 23px;
+  border-radius: 70% 30% 65% 35%;
+  background: #fff6cf;
+  box-shadow: 0 0 20px #ffc247;
+  content: "";
+  transform: translateX(-50%) rotate(45deg);
+}
+.intro-scene-creation {
+  isolation: isolate;
+  animation-duration: 6s;
+  animation-delay: 4s;
+  background:
+    linear-gradient(180deg, #241f26a8, #18151acc),
+    radial-gradient(ellipse at 50% 50%, #9b6538, #342721 64%, #171518);
+}
+.sanctuary-arch {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  width: min(72vw, 760px);
+  height: 100%;
+  border: 7px solid #a68b69;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+  box-shadow: 0 0 0 12px #362c29, 0 0 48px #ffc46546, inset 0 0 40px #ffcf6b24;
+  transform: translateX(-50%);
+}
+.sanctuary-arch::before {
+  position: absolute;
+  inset: 5%;
+  border: 2px solid #d6b77c;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+  background: repeating-linear-gradient(90deg, transparent 0 34px, #d6b77c16 35px 37px);
+  content: "";
+}
+.intro-scene-creation .creation-aura { z-index: 1; top: 49%; }
+.intro-scene-creation .parvati-creating {
+  z-index: 2;
+  top: 57%;
+  left: 31%;
+  width: clamp(86px, 12vw, 142px);
+  height: clamp(174px, 26vw, 270px);
+  animation: parvati-meditate 6s ease-in-out 4s infinite;
+}
+.parvati-creating .parvati-hands {
+  top: 53%;
+  left: 80%;
+  width: 80%;
+  border-top-width: 6px;
+  transform: rotate(-14deg);
+}
+.parvati-creating .parvati-hands i {
+  position: absolute;
+  top: -13px;
+  right: -3px;
+  width: 20px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f3cd8d;
+}
+.intro-scene-creation .creation-energy { z-index: 2; top: 52%; width: 34%; animation-delay: 4s; }
+.intro-scene-creation .energy-left { left: 35%; transform: rotate(-16deg); }
+.intro-scene-creation .energy-right { left: 44%; transform: rotate(13deg); }
+.intro-scene-creation .creation-lotus { z-index: 2; top: 67%; }
+.intro-scene-creation .creation-child {
+  z-index: 3;
+  top: 35%;
+  left: 62%;
+  width: clamp(68px, 10vw, 112px);
+  height: clamp(130px, 21vw, 210px);
+  aspect-ratio: auto;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  transform: translate(-50%, -40%);
+  animation: creation-child-arrive 6s ease-out 4s both;
+}
+.creation-child-head {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 61%;
+  aspect-ratio: 1;
+  border: 2px solid #ffe6aa;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff8da, #e4a361 72%);
+  box-shadow: 0 0 26px #ffe09a, 0 0 62px #ee9b31;
+  transform: translateX(-50%);
+}
+.creation-child-head::before {
+  position: absolute;
+  top: -3%;
+  right: -5%;
+  left: -5%;
+  height: 34%;
+  border-radius: 50% 50% 12% 12%;
+  background: #34231e;
+  content: "";
+}
+.creation-child-head i {
+  position: absolute;
+  top: 57%;
+  left: 66%;
+  width: 10%;
+  height: 4%;
+  border-radius: 50%;
+  background: #5c3424;
+  opacity: 0;
+  animation: child-opens-eyes 6s ease 4s both;
+}
+.creation-child-body {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  width: 94%;
+  height: 58%;
+  border-radius: 45% 45% 12% 12%;
+  background: linear-gradient(90deg, #8c4a2d, #f1bd6b 48%, #9b4d2d);
+  clip-path: polygon(50% 0, 82% 11%, 100% 100%, 0 100%, 18% 11%);
+  transform: translateX(-50%);
+}
+.intro-scene-creation .creation-sparkles { z-index: 4; animation-delay: 4s; }
+.creation-lens-petal {
+  position: absolute;
+  z-index: 6;
+  top: 50%;
+  left: 50%;
+  width: 34vw;
+  height: 85vh;
+  border-radius: 6% 92% 6% 92%;
+  background: linear-gradient(135deg, #fff2bd, #f3bb5c 48%, #bd6438);
+  box-shadow: 0 0 60px #ffd26b;
+  opacity: 0;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  animation: creation-petal-wipe 1.5s ease-in 8.5s both;
+}
+.intro-scene-bal-ganesh {
+  isolation: isolate;
+  animation-duration: 6s;
+  animation-delay: 10s;
+  background: radial-gradient(ellipse at 54% 47%, #c78342 0%, #523323 46%, #171419 100%);
+}
+.bal-sanctuary-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 55%, #ffe1a055, transparent 49%), linear-gradient(180deg, #1a2130, #713f2b 82%);
+}
+.bal-reveal-petal {
+  position: absolute;
+  z-index: 7;
+  top: 50%;
+  left: 50%;
+  width: 44vw;
+  height: 110vh;
+  border-radius: 5% 90% 5% 90%;
+  background: linear-gradient(135deg, #fff0bc, #e3a34b 52%, #8c492b);
+  box-shadow: 0 0 80px #ffcf68;
+  transform: translate(-170%, -50%) rotate(-24deg);
+  animation: bal-petal-reveal 2.2s ease-in 10s both;
+}
+.parvati-bal {
+  z-index: 3;
+  top: 56%;
+  left: 33%;
+  width: clamp(94px, 13vw, 150px);
+  height: clamp(185px, 27vw, 285px);
+  animation: parvati-meditate 6s ease-in-out 10s infinite;
+}
+.parvati-hand-on-shoulder {
+  position: absolute;
+  z-index: 4;
+  top: 49%;
+  right: -29%;
+  width: 42%;
+  height: 9%;
+  border-radius: 45%;
+  background: linear-gradient(90deg, #ce8750, #ffe0a2);
+  box-shadow: 0 0 12px #ffd27b;
+  transform: rotate(-12deg);
+}
+.bal-ganesh {
+  position: absolute;
+  z-index: 4;
+  bottom: 11%;
+  left: 61%;
+  width: clamp(170px, 27vw, 320px);
+  height: 67%;
+  filter: drop-shadow(0 0 28px #ffd46d);
+  transform: translateX(-50%);
+}
+.bal-halo {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  width: 84%;
+  aspect-ratio: 1;
+  border: 2px solid #ffe6a0;
+  border-radius: 50%;
+  box-shadow: 0 0 55px #ffcd5c, inset 0 0 30px #ffd77980;
+  transform: translateX(-50%);
+}
+.bal-head {
+  position: absolute;
+  z-index: 3;
+  top: 17%;
+  left: 50%;
+  width: 55%;
+  height: 43%;
+  border: 2px solid #ffe6a7;
+  border-radius: 48% 48% 42% 42%;
+  background: radial-gradient(circle at 35% 29%, #fff0c6, #e8a659 70%);
+  box-shadow: 0 0 26px #ffd66c;
+  transform: translateX(-50%);
+}
+.bal-head i {
+  position: absolute;
+  top: 46%;
+  left: 28%;
+  width: 8%;
+  height: 5%;
+  border-radius: 50%;
+  background: #493022;
+  box-shadow: 51px 0 0 #493022;
+}
+.bal-head b {
+  position: absolute;
+  top: 51%;
+  left: 49%;
+  width: 23%;
+  height: 38%;
+  border-right: 7px solid #c06e36;
+  border-bottom: 7px solid #c06e36;
+  border-radius: 0 0 85% 0;
+  transform: rotate(13deg);
+}
+.bal-head::after {
+  position: absolute;
+  bottom: 14%;
+  left: 40%;
+  width: 20%;
+  height: 2px;
+  border-radius: 50%;
+  background: #a75639;
+  content: "";
+}
+.bal-ear {
+  position: absolute;
+  z-index: 2;
+  top: 29%;
+  width: 28%;
+  height: 24%;
+  border: 2px solid #fbd88c;
+  border-radius: 80% 20% 75% 30%;
+  background: linear-gradient(135deg, #f3c477, #b96636);
+}
+.ear-left { left: 9%; transform: rotate(-23deg); }
+.ear-right { right: 9%; transform: scaleX(-1) rotate(-23deg); }
+.bal-crown {
+  position: absolute;
+  z-index: 4;
+  top: 4%;
+  left: 50%;
+  display: grid;
+  width: 33%;
+  height: 18%;
+  place-items: center;
+  border: 2px solid #ffebac;
+  border-radius: 55% 55% 12% 12%;
+  background: linear-gradient(135deg, #fff0a7, #c3822d 68%);
+  color: #fff2bd;
+  font-size: clamp(20px, 4vw, 46px);
+  text-shadow: 0 0 16px #fff3bd;
+  transform: translateX(-50%);
+}
+.bal-body {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 78%;
+  height: 49%;
+  border: 2px solid #f4ce81;
+  border-radius: 48% 48% 14% 14%;
+  background: linear-gradient(90deg, #8c482a, #efbc65 48%, #8e492d);
+  clip-path: polygon(50% 0, 81% 12%, 100% 100%, 0 100%, 19% 12%);
+  transform: translateX(-50%);
+}
+.bal-petals {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  color: #ffe6a3;
+  font-size: clamp(20px, 4vw, 42px);
+  letter-spacing: 9vw;
+  text-shadow: 0 0 18px #ffc557;
+  animation: petal-fall linear 3.5s infinite;
+}
+.intro-scene-transformation { animation-duration: 6s; animation-delay: 16s; }
+.intro-scene-transformation .transformation-om {
+  z-index: 3;
+  top: 7%;
+  color: #fff0b0;
+  opacity: .78;
+  mix-blend-mode: screen;
+  animation-delay: 16s;
+}
+.intro-scene-transformation .transformation-aura { animation-delay: 16s; }
+.intro-scene-transformation .transformation-energy { animation-delay: 16s; }
+.intro-scene-transformation .transformation-idol { animation-delay: 16s; }
+.match-hand {
+  position: absolute;
+  z-index: 4;
+  top: 42%;
+  left: 67%;
+  width: clamp(30px, 5vw, 60px);
+  height: clamp(38px, 6vw, 72px);
+  border-radius: 48% 48% 40% 40%;
+  background: linear-gradient(135deg, #ffe9aa, #d58a48);
+  box-shadow: 0 0 24px #fff0ad;
+}
+.match-hand::before {
+  position: absolute;
+  top: -34%;
+  left: 12%;
+  width: 76%;
+  height: 48%;
+  border-radius: 50% 50% 12% 12%;
+  background: repeating-linear-gradient(90deg, #efc88b 0 22%, transparent 23% 27%);
+  content: "";
+}
+.match-hand::after {
+  position: absolute;
+  right: -22%;
+  bottom: 20%;
+  width: 37%;
+  height: 40%;
+  border-radius: 50%;
+  background: #d78c49;
+  content: "";
+}
+.child-match-hand { animation: child-hand-match 6s ease 16s both; }
+.divine-match-hand { opacity: 0; animation: divine-hand-match 6s ease 16s both; }
+.intro-scene-darshan {
+  animation-duration: 4s;
+  animation-delay: 22s;
+}
+.intro-scene-darshan .darshan-image,
+.intro-scene-darshan .darshan-offering,
+.intro-scene-darshan .darshan-blessing { animation-duration: 4s; animation-delay: 22s; }
+.intro-scene-darshan .darshan-petals { animation-duration: 2.6s; animation-delay: 22s; }
+.intro-scene-darshan .darshan-offering { z-index: 4; }
+.intro-scene-darshan .darshan-offering i {
+  position: absolute;
+  top: 18%;
+  left: 24%;
+  width: 17%;
+  height: 20%;
+  border-radius: 55% 55% 48% 48%;
+  background: linear-gradient(145deg, #ffe8ad, #d59234 68%, #a34a24);
+  clip-path: polygon(50% 0, 88% 27%, 100% 100%, 0 100%, 12% 27%);
+  filter: drop-shadow(0 0 6px #fff0b0);
+}
+.intro-scene-darshan .darshan-offering i:nth-child(2) { left: 43%; }
+.intro-scene-darshan .darshan-offering i:nth-child(3) { left: 62%; }
+.intro-scene-title {
+  z-index: 5;
+  gap: clamp(18px, 3.5vh, 32px);
+  padding: 24px;
+  background: radial-gradient(ellipse at 50% 45%, #e09238 0%, #b05a25 45%, #71341b 100%);
+  animation-name: title-card-hold;
+  animation-duration: 4s;
+  animation-delay: 26s;
+  animation-timing-function: linear;
+  animation-fill-mode: both;
+}
+.intro-scene-title strong {
+  max-width: 94vw;
+  color: #fff4d8;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(18px, 3.6vw, 44px);
+  font-weight: 600;
+  letter-spacing: .065em;
+  text-align: center;
+  text-shadow: 0 4px 28px #481e11;
+}
+.intro-scene-title>span:not(.title-om) {
+  color: #fff1d2;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(16px, 2.3vw, 25px);
+  text-align: center;
+}
+.intro-scene-title small {
+  color: #ffe3a2;
+  font-size: clamp(11px, 1.6vw, 16px);
+  letter-spacing: .16em;
+  text-align: center;
+}
+@keyframes title-card-hold { 0% { opacity: 0; } .001%, 100% { opacity: 1; } }
+@keyframes diya-dissolve { 0% { opacity: .35; transform: scale(.7); } 100% { opacity: 1; transform: scale(1.2); } }
+@keyframes creation-petal-wipe {
+  0%, 58% { opacity: 0; transform: translate(-50%, -50%) rotate(-28deg) scale(.5); }
+  100% { opacity: 1; transform: translate(-50%, -50%) rotate(-28deg) scale(5); }
+}
+@keyframes bal-petal-reveal {
+  0% { transform: translate(-170%, -50%) rotate(-24deg); }
+  48% { transform: translate(-50%, -50%) rotate(-24deg) scale(1.1); }
+  100% { transform: translate(170%, -50%) rotate(-24deg); }
+}
+@keyframes child-hand-match {
+  0%, 38% { opacity: 1; transform: scale(.62); }
+  52%, 100% { opacity: 0; transform: scale(.76); }
+}
+@keyframes divine-hand-match {
+  0%, 38% { opacity: 0; transform: scale(.76); }
+  52%, 100% { opacity: 1; transform: scale(1); }
+}
+@media (max-width: 600px) {
+  .parvati-creating { left: 26%; }
+  .parvati-bal { left: 26%; }
+  .bal-ganesh { left: 63%; width: 54vw; height: 61%; }
+  .bal-reveal-petal { width: 68vw; }
+  .intro-scene-title { gap: 20px; }
+  .intro-scene-title strong { font-size: clamp(16px, 4.4vw, 27px); }
+}
+.intro-scene-om { animation-duration: 4s; animation-delay: 0s; }
+.intro-scene-kailasa { animation-duration: 4s; animation-delay: 4s; }
+.intro-scene-creation { animation-duration: 4s; animation-delay: 8s; }
+.intro-scene-creation .parvati-creating { animation: parvati-meditate 4s ease-in-out 8s infinite; }
+.intro-scene-creation .creation-energy { animation-delay: 8s; }
+.intro-scene-creation .creation-child { animation: creation-child-arrive 4s ease-out 8s both; }
+.intro-scene-creation .creation-child-head i { animation: child-opens-eyes 4s ease 8s both; }
+.intro-scene-creation .creation-sparkles { animation-delay: 8s; }
+.creation-lens-petal { animation: creation-petal-wipe 1.5s ease-in 10.5s both; }
+.intro-scene-bal-ganesh { animation-duration: 4s; animation-delay: 12s; }
+.bal-reveal-petal { animation: bal-petal-reveal 1.8s ease-in 12s both; }
+.parvati-bal { animation: parvati-meditate 4s ease-in-out 12s infinite; }
+.intro-scene-garden { animation-duration: 4s; animation-delay: 16s; }
+.intro-scene-garden .lotus-one { animation-delay: 16s; }
+.intro-scene-garden .lotus-two { animation-delay: 16.5s; }
+.intro-scene-garden .lotus-three { animation-delay: 17s; }
+.heavenly-child { animation: heavenly-child-walk 4s ease-in-out 16s both; }
+.intro-scene-transformation { animation-duration: 4s; animation-delay: 20s; }
+.intro-scene-transformation .transformation-om {
+  z-index: 1;
+  animation: transformation-om-form 4s ease-in-out 20s both, intro-om-glow 2.4s ease-in-out 20s infinite alternate;
+}
+.intro-scene-transformation .transformation-aura { animation: transformation-aura-bloom 4s ease 20s both; }
+.intro-scene-transformation .transformation-energy { animation: transformation-sparks 4s ease 20s both; }
+.intro-scene-transformation .transformation-idol { animation: divine-form-reveal 4s ease-out 20s both; }
+.child-match-hand { animation: child-hand-match 4s ease 20s both; }
+.divine-match-hand { animation: divine-hand-match 4s ease 20s both; }
+.intro-scene-throne { animation-duration: 3s, 3s; animation-delay: 24s, 24s; }
+.intro-scene-title {
+  animation-duration: 3s;
+  animation-delay: 27s;
+  background: radial-gradient(ellipse at 50% 45%, #e09238 0%, #b05a25 45%, #71341b 100%);
+}
+.intro-scene-title .title-om {
+  color: #fff0b0;
+  font-size: clamp(48px, 8vw, 88px);
+  text-shadow: 0 0 22px #fff1bd, 0 0 80px #ffba43;
+}
+.intro-scene-title em {
+  color: #fff1d2;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(14px, 2vw, 22px);
+  font-style: normal;
+  text-align: center;
+  text-shadow: 0 2px 18px #481e11;
+}
+.intro-scene-title strong { font-size: clamp(18px, 3.2vw, 38px); }
+.intro-scene-title small { font-size: clamp(11px, 1.5vw, 16px); }
+.intro-scene-title { animation-name: title-card-hold; }
+@keyframes title-card-hold {
+  0% { opacity: 0; }
+  .001%, 82% { opacity: 1; }
+  100% { opacity: 0; }
+}
+.kailasa-portal {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: min(64vw, 640px);
+  aspect-ratio: 1;
+  border: 1px solid #fff0bf66;
+  border-radius: 50%;
+  box-shadow: 0 0 85px #ffc55a55, inset 0 0 65px #ffe0a055;
+  transform: translate(-50%, -50%);
+}
+.sandalwood-vessel {
+  position: absolute;
+  z-index: 3;
+  right: 12%;
+  bottom: 10%;
+  width: clamp(58px, 9vw, 102px);
+  height: clamp(32px, 5vw, 56px);
+  border: 2px solid #f6d487;
+  border-radius: 14% 14% 48% 48%;
+  background: linear-gradient(180deg, #f8d783, #a75d27 75%);
+  box-shadow: 0 0 24px #ffc55788;
+}
+.sandalwood-vessel span {
+  position: absolute;
+  top: -32%;
+  left: 9%;
+  width: 82%;
+  height: 42%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #ffeab0, #cd9147 68%, #8d512d);
+  box-shadow: 0 0 25px #ffcc65;
+}
+.parvati-smile {
+  position: absolute;
+  z-index: 2;
+  top: 11%;
+  left: 49%;
+  width: 10px;
+  height: 5px;
+  border-bottom: 1px solid #6c3e2d;
+  border-radius: 50%;
+}
+.golden-butterfly {
+  position: absolute;
+  z-index: 4;
+  color: #ffe28c;
+  font-size: clamp(18px, 3vw, 32px);
+  text-shadow: 0 0 14px #ffe28c;
+  animation: butterfly-drift 3s ease-in-out infinite alternate;
+}
+.garden-ear {
+  position: absolute;
+  z-index: 1;
+  top: 28%;
+  left: -21%;
+  width: 35%;
+  height: 34%;
+  border: 1px solid #ffe6a0;
+  border-radius: 80% 20% 75% 30%;
+  background: linear-gradient(135deg, #f3c477, #b96636);
+  transform: rotate(-23deg);
+}
+.garden-eye {
+  position: absolute;
+  z-index: 2;
+  top: 49%;
+  left: 67%;
+  width: 7%;
+  height: 5%;
+  border-radius: 50%;
+  background: #493022;
+}
+.garden-trunk {
+  position: absolute;
+  z-index: 2;
+  top: 52%;
+  left: 58%;
+  width: 23%;
+  height: 35%;
+  border-right: 4px solid #c06e36;
+  border-bottom: 4px solid #c06e36;
+  border-radius: 0 0 85% 0;
+  transform: rotate(12deg);
+}
+.garden-crown {
+  position: absolute;
+  z-index: 3;
+  top: -19%;
+  left: 32%;
+  width: 44%;
+  height: 27%;
+  border: 1px solid #ffebac;
+  border-radius: 55% 55% 12% 12%;
+  background: linear-gradient(135deg, #fff0a7, #c3822d 68%);
+  color: #fff2bd;
+  font-size: clamp(9px, 1.5vw, 15px);
+  font-style: normal;
+  line-height: 1.3;
+  text-align: center;
+  text-shadow: 0 0 9px #fff3bd;
+}
+.butterfly-left { top: 33%; left: 28%; }
+.butterfly-right { top: 43%; right: 29%; animation-delay: -.8s; }
+.hero-intro-controls { animation: intro-controls-fade 30s linear both; }
+@keyframes intro-controls-fade {
+  0%, 88% { opacity: 1; }
+  90%, 100% { opacity: 0; visibility: hidden; pointer-events: none; }
+}
+@keyframes butterfly-drift {
+  to { transform: translate3d(15px, -20px, 0) rotate(25deg); }
+}
+@media (max-width: 600px) {
+  .intro-scene-title { gap: clamp(12px, 2.5vh, 20px); }
+  .intro-scene-title strong { font-size: clamp(16px, 4.7vw, 27px); letter-spacing: .045em; }
+  .intro-scene-title>span:not(.title-om) { font-size: clamp(13px, 3.8vw, 18px); }
+  .intro-scene-title em { font-size: clamp(13px, 3.8vw, 17px); }
+}
+.intro-scene-bal-ganesh .parvati-bal,
+.intro-scene-bal-ganesh .bal-ganesh { display: none; }
+.bal-reference-image {
+  position: absolute;
+  z-index: 4;
+  inset: 0;
+  background: url("/images/bal-ganesh-reference.jpg") center 51% / auto 78% no-repeat;
+  filter: drop-shadow(0 0 28px #ffd46d);
+  mask-image: radial-gradient(ellipse at 50% 52%, #000 45%, transparent 76%);
+  mix-blend-mode: multiply;
+  transform-style: preserve-3d;
+  animation: bal-image-reveal 4s ease-out 12s both;
+}
+@keyframes bal-image-reveal {
+  0%, 28% { opacity: 0; filter: blur(12px) drop-shadow(0 0 28px #ffd46d); transform: perspective(900px) rotateY(-8deg) scale(.94); }
+  52%, 100% { opacity: 1; filter: blur(0) drop-shadow(0 0 28px #ffd46d); transform: perspective(900px) rotateY(0) scale(1.02); }
+}
+.transformation-reference-image {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background: url("/images/ganesh-line-art-reference.jpg") center 49% / auto 88% no-repeat;
+  filter: sepia(.8) brightness(1.2) drop-shadow(0 0 18px #ffcf69);
+  mask-image: radial-gradient(ellipse at 50% 50%, #000 38%, transparent 72%);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform-style: preserve-3d;
+  animation: line-art-reveal 4s ease-out 20s both;
+}
+@keyframes line-art-reveal {
+  0%, 18% { opacity: 0; transform: perspective(1000px) rotateY(8deg) scale(.94); }
+  48% { opacity: .56; transform: perspective(1000px) rotateY(0) scale(1.02); }
+  100% { opacity: .28; transform: perspective(1000px) rotateY(-3deg) scale(1.08); }
+}
+@media (max-width: 600px) {
+  .bal-reference-image { background-size: auto 72%; }
+  .transformation-reference-image { background-size: auto 78%; }
+}
+.intro-scene-om .intro-om { display: none; }
+.opening-image {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background:
+    linear-gradient(180deg, #07111d1a 0%, transparent 28%, #25140738 100%),
+    url("/images/intro-opening-reference.png") center / cover no-repeat;
+  filter: saturate(1.08) contrast(1.03);
+  transform-style: preserve-3d;
+  animation: opening-image-motion 4s ease-out both;
+}
+.opening-ui-cleanup {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  width: 38%;
+  height: 16%;
+  background: linear-gradient(135deg, #0b1425, #151925);
+}
+@keyframes opening-image-motion {
+  0% { opacity: 0; transform: perspective(1200px) scale(1.08) rotateY(-2deg); }
+  45%, 100% { opacity: 1; transform: perspective(1200px) scale(1.01) rotateY(0); }
+}
+.intro-scene-title {
+  gap: clamp(20px, 3.8vh, 34px);
+  background:
+    radial-gradient(ellipse at 50% 45%, #e09238 0%, #b05a25 45%, #71341b 100%);
+}
+.intro-scene-title .title-om {
+  color: #ffe8a6;
+  font-size: clamp(48px, 6.5vw, 82px);
+  line-height: 1;
+  text-shadow: 0 0 22px #fff1bd, 0 0 80px #ffba43;
+}
+.intro-scene-title em {
+  color: #fff1d2;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(14px, 1.8vw, 20px);
+  font-style: normal;
+  text-align: center;
+  text-shadow: 0 2px 18px #481e11;
+}
+@media (max-width: 600px) {
+  .intro-scene-title { gap: clamp(12px, 2.5vh, 20px); }
+  .intro-scene-title .title-om { font-size: clamp(42px, 12vw, 64px); }
+  .intro-scene-title em { font-size: clamp(13px, 3.8vw, 17px); }
+}
+.intro-scene-kailasa>:not(.kailasa-reference-image),
+.intro-scene-creation>:not(.creation-reference-image),
+.intro-scene-bal-ganesh>:not(.bal-reference-image),
+.intro-scene-garden>:not(.garden-reference-image),
+.intro-scene-transformation>:not(.transformation-om):not(.transformation-reference-image):not(.transformation-idol),
+.intro-scene-throne>:not(.throne-veil) { display: none; }
+.kailasa-reference-image {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: url("/images/ganesh-line-art-reference.jpg") center 48% / auto 88% no-repeat;
+  filter: sepia(.45) brightness(1.25) drop-shadow(0 0 24px #ffd46d);
+  mask-image: radial-gradient(ellipse at 50% 50%, #000 36%, transparent 72%);
+  mix-blend-mode: screen;
+  transform-style: preserve-3d;
+  animation: image-scene-pan 4s ease-out 4s both;
+}
+.creation-reference-image {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: url("/images/bal-ganesh-reference.jpg") center 51% / auto 82% no-repeat;
+  filter: drop-shadow(0 0 28px #ffd46d);
+  mask-image: radial-gradient(ellipse at 50% 52%, #000 45%, transparent 76%);
+  mix-blend-mode: multiply;
+  animation: image-scene-pan 4s ease-out 8s both;
+}
+.garden-reference-image {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background: url("/images/bal-ganesh-reference.jpg") center 48% / auto 90% no-repeat;
+  filter: drop-shadow(0 0 28px #ffd46d);
+  mask-image: radial-gradient(ellipse at 50% 52%, #000 45%, transparent 76%);
+  mix-blend-mode: multiply;
+  animation: image-scene-garden 4s ease-out 16s both;
+}
+@keyframes image-scene-pan {
+  0%, 15% { opacity: 0; transform: perspective(1100px) rotateY(8deg) scale(.93); }
+  50%, 100% { opacity: 1; transform: perspective(1100px) rotateY(0) scale(1.03); }
+}
+@keyframes image-scene-garden {
+  0%, 15% { opacity: 0; transform: perspective(1100px) rotateY(-7deg) scale(1.02); }
+  50%, 100% { opacity: 1; transform: perspective(1100px) rotateY(0) scale(1.12); }
+}
+@media (max-width: 600px) {
+  .kailasa-reference-image { background-size: auto 78%; }
+  .creation-reference-image { background-size: auto 72%; }
+  .garden-reference-image { background-size: auto 80%; }
+}
+.hero-intro-visuals>.intro-scene:not(.intro-sequence-image):not(.intro-scene-title) { display: none; }
+.intro-scene.intro-sequence-image {
+  z-index: 2;
+  isolation: isolate;
+  animation-name: sequence-image-opacity, sequence-image-camera;
+  animation-duration: 1s, 1s;
+  animation-delay: 0s, 0s;
+  animation-timing-function: linear, ease-in-out;
+  animation-fill-mode: both, both;
+}
+.intro-scene.intro-sequence-image.sequence-image-one { --sequence-art: url("/images/intro-sequence-1.webp"); }
+.intro-scene.intro-sequence-image.sequence-image-two { --sequence-art: url("/images/intro-sequence-2.webp"); animation-delay: 1s, 1s; }
+.intro-scene.intro-sequence-image.sequence-image-three { --sequence-art: url("/images/intro-sequence-3.webp"); animation-delay: 2s, 2s; }
+.intro-scene.intro-sequence-image.sequence-image-four { --sequence-art: url("/images/intro-sequence-4.webp"); animation-delay: 3s, 3s; }
+.intro-scene.intro-sequence-image.sequence-image-five { --sequence-art: url("/images/intro-sequence-5.webp"); animation-delay: 4s, 4s; }
+.intro-scene.intro-sequence-image.sequence-image-six { --sequence-art: url("/images/intro-sequence-6.webp"); animation-delay: 5s, 5s; }
+.intro-scene.intro-sequence-image.sequence-image-seven { --sequence-art: url("/images/intro-sequence-7.webp"); animation-delay: 6s, 6s; }
+.intro-scene.intro-sequence-image.sequence-image-eight { --sequence-art: url("/images/intro-sequence-8.webp"); animation-delay: 7s, 7s; }
+.sequence-image-backdrop,
+.sequence-image-main {
+  position: absolute;
+  inset: 0;
+  background-image: var(--sequence-art);
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.sequence-image-backdrop {
+  z-index: 0;
+  background-size: cover;
+  filter: blur(26px) brightness(.58) saturate(1.12);
+  transform: scale(1.08);
+}
+.sequence-image-main {
+  z-index: 1;
+  background-size: contain;
+  filter: drop-shadow(0 10px 38px #21100680);
+}
+@keyframes sequence-image-opacity {
+  0%, 100% { opacity: 0; }
+  4%, 96% { opacity: 1; }
+}
+@keyframes sequence-image-camera {
+  0% { transform: perspective(1200px) scale(1.07) rotateY(-2deg); }
+  100% { transform: perspective(1200px) scale(1.01) rotateY(2deg); }
+}
+.intro-scene.intro-scene-title { animation-duration: 2s; animation-delay: 8s; }
