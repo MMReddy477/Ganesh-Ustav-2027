@@ -10,7 +10,6 @@ import {
 } from "lucide-react";
 import { Countdown } from "@/components/countdown";
 import { AudioToggle } from "@/components/audio-toggle";
-import { LazyGaneshScene } from "@/components/lazy-ganesh-scene";
 import { CinematicHero } from "@/components/cinematic-hero";
 import { Header } from "@/components/header";
 import { ScrollEffects } from "@/components/scroll-effects";
@@ -205,12 +204,6 @@ export default async function Home() {
             <AudioToggle />
           </div>
           <div className="hero-countdown"><div className="countdown-caption"><span className="live-dot" /> COUNTDOWN TO GANESH CHATURTHI</div><Countdown /></div>
-        </section>
-
-        <section className="scene-band" aria-label="A glowing 3D festival sculpture">
-          <div className="scene-copy"><p className="eyebrow"><span className="eyebrow-line" /> A MOMENT OF STILLNESS</p><h2>Grace in every<br /><em>little detail.</em></h2><p>A golden, living tribute to the one who makes every beginning auspicious.</p></div>
-          <LazyGaneshScene />
-          <span className="scene-label">SHREE GANESHAYA NAMAH · 2027</span>
         </section>
 
         <section className="schedule section-pad" id="schedule">

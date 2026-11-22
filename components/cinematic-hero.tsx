@@ -1,21 +1,19 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowDown, ArrowRight, CalendarDays, ChartNoAxesColumnIncreasing, House, Images, Pause, Play, UsersRound, Volume2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FloatingPetals } from "@/components/floating-petals";
 
-const IntroCanvas = dynamic(
-  () => import("@/components/cinematic-intro-canvas").then((module) => module.CinematicIntroCanvas),
+const IntroEffects = dynamic(
+  () => import("@/components/cinematic-intro-effects").then((module) => module.CinematicIntroEffects),
   { ssr: false, loading: () => null },
 );
 
-const INTRO_KEY = "suryodaya-ganesh-intro-complete-v3";
+const INTRO_KEY = "suryodaya-ganesh-intro-complete-v4";
 
 export function CinematicHero() {
-  const heroRef = useRef<HTMLElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [ready, setReady] = useState(false);
   const [introActive, setIntroActive] = useState(true);
@@ -53,41 +51,15 @@ export function CinematicHero() {
     const previousOverflow = document.documentElement.style.overflow;
     const audio = audioRef.current;
     document.documentElement.style.overflow = "hidden";
+    const revealTimeout = window.setTimeout(() => setRevealStarted(true), 7_000);
     const timeout = window.setTimeout(finishIntro, 10_000);
     return () => {
       document.documentElement.style.overflow = previousOverflow;
+      window.clearTimeout(revealTimeout);
       window.clearTimeout(timeout);
       audio?.pause();
     };
   }, [finishIntro, introActive, ready]);
-
-  useEffect(() => {
-    const element = heroRef.current;
-    if (!element) return;
-
-    let resizeTimeout: number | undefined;
-    const syncCanvasSize = () => {
-      if (resizeTimeout !== undefined) return;
-      resizeTimeout = window.setTimeout(() => window.dispatchEvent(new Event("resize")), 500);
-    };
-    const observer = new MutationObserver(() => {
-      if (element.querySelector(".hero-intro-canvas canvas")) {
-        observer.disconnect();
-        syncCanvasSize();
-      }
-    });
-
-    observer.observe(element, { childList: true, subtree: true });
-    if (element.querySelector(".hero-intro-canvas canvas")) {
-      observer.disconnect();
-      syncCanvasSize();
-    }
-
-    return () => {
-      observer.disconnect();
-      if (resizeTimeout !== undefined) window.clearTimeout(resizeTimeout);
-    };
-  }, []);
 
   async function toggleIntroSound() {
     const audio = audioRef.current;
@@ -106,7 +78,7 @@ export function CinematicHero() {
   }
 
   return (
-    <section ref={heroRef} className={`hero hero-cinematic${ready && introActive ? " hero-intro-open" : ""}`} id="home">
+    <section className={`hero hero-cinematic${ready && introActive ? " hero-intro-open" : ""}`} id="home">
       <div className="hero-grain" aria-hidden="true" />
       <div className="hero-halo" aria-hidden="true" />
       <motion.div
@@ -164,18 +136,7 @@ export function CinematicHero() {
         >
           <div className="hero-art-orbit orbit-one" />
           <div className="hero-art-orbit orbit-two" />
-          <div className="hero-image-frame" role="img" aria-label="Lord Ganesha seated on an ornate golden altar">
-            {revealStarted && (
-              <Image
-                src="/images/Ganesha%20beneath%20golden%20temple%20bells.png"
-                alt=""
-                fill
-                sizes="(max-width: 760px) 94vw, (max-width: 1280px) 48vw, 660px"
-                priority
-                className={`hero-image${introActive ? "" : " hero-image-visible"}`}
-              />
-            )}
-          </div>
+          <div className="hero-image-frame" role="img" aria-label="A softly animated golden Ganesha-inspired sculpture" />
           <div className="hero-sparkle sparkle-a">✳</div>
           <div className="hero-sparkle sparkle-b">✴</div>
         </motion.div>
@@ -330,7 +291,7 @@ export function CinematicHero() {
             </div>
           </div>
           <div className="hero-intro-layer">
-            <IntroCanvas active={introActive} onReveal={() => setRevealStarted(true)} onComplete={finishIntro} />
+            <IntroEffects />
           </div>
           <>
             <audio ref={audioRef} src="/media/ganesh-song.mpeg" preload="none" />
