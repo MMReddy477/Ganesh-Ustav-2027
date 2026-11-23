@@ -1,8 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { ArrowDown, ArrowRight, CalendarDays, ChartNoAxesColumnIncreasing, House, Images, Pause, Play, UsersRound, Volume2 } from "lucide-react";
+import { ArrowDown, ArrowRight, CalendarDays, ChartNoAxesColumnIncreasing, Download, House, Images, Pause, Play, UsersRound, Volume2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { FloatingPetals } from "@/components/floating-petals";
 
@@ -13,7 +14,10 @@ const IntroEffects = dynamic(
 
 const INTRO_KEY = "suryodaya-ganesh-intro-complete-v4";
 
-export function CinematicHero() {
+type IntroFrame = { fileName: string; src: string };
+type CinematicHeroProps = { introFrames: IntroFrame[] };
+
+export function CinematicHero({ introFrames }: CinematicHeroProps) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [ready, setReady] = useState(false);
   const [introActive, setIntroActive] = useState(true);
@@ -106,16 +110,26 @@ export function CinematicHero() {
             <a className="button button-outline" href="#schedule"><CalendarDays size={15} /> Events</a>
             <a className="button button-outline" href="#gallery"><Images size={15} /> Gallery</a>
             {!introActive && (
-              <button
-                type="button"
-                className="button button-outline"
-                onClick={() => {
-                  setRevealStarted(false);
-                  setIntroActive(true);
-                }}
-              >
-                <Play size={15} /> Watch intro
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="button button-outline"
+                  onClick={() => {
+                    setRevealStarted(false);
+                    setIntroActive(true);
+                  }}
+                >
+                  <Play size={15} /> Watch intro
+                </button>
+                <a
+                  className="button button-outline"
+                  href="/downloads/ganesh-utsav-intro-frames.zip"
+                  download="ganesh-utsav-intro-frames.zip"
+                  aria-label="Download the intro sequence images as a ZIP file"
+                >
+                  <Download size={15} /> Download intro
+                </a>
+              </>
             )}
           </div>
           <div className="hero-identity" aria-label="Suryodaya Colony community facts">
@@ -141,6 +155,22 @@ export function CinematicHero() {
           <div className="hero-sparkle sparkle-b">✴</div>
         </motion.div>
       </div>
+      {!introActive && introFrames.length > 0 && (
+        <div className="hero-sequence-strip" role="region" aria-label="Intro sequence images" tabIndex={0}>
+          {introFrames.map((frame, index) => (
+            <div className="hero-sequence-frame" key={frame.fileName}>
+              <Image
+                src={frame.src}
+                alt={`Intro sequence frame ${index + 1} of ${introFrames.length}`}
+                width={96}
+                height={64}
+                sizes="96px"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      )}
       <a className="scroll-cue" href="#overview"><span>SCROLL TO FEEL THE JOY</span><ArrowDown size={14} /></a>
       <div className="hero-bottom-line" aria-hidden="true" />
 
@@ -300,6 +330,14 @@ export function CinematicHero() {
                 {soundEnabled ? <Pause size={14} /> : <Volume2 size={14} />}
                 {soundEnabled ? "Mute music" : "Play devotional music"}
               </button>
+              <a
+                className="hero-intro-download"
+                href="/downloads/ganesh-utsav-intro-frames.zip"
+                download="ganesh-utsav-intro-frames.zip"
+                aria-label="Download the eight intro sequence images as a ZIP file"
+              >
+                <Download size={14} /> Download
+              </a>
               <button className="hero-intro-skip" type="button" onClick={finishIntro} autoFocus>
                 Skip intro <ArrowRight size={14} />
               </button>

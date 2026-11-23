@@ -18,6 +18,7 @@ import { ExpenseLedger } from "@/components/expense-ledger";
 import { HomepagePulse } from "@/components/homepage-pulse";
 import { PublicActions } from "@/components/public-actions";
 import { Gallery } from "@/components/gallery";
+import { introSequenceFrames } from "@/lib/intro-sequence.generated";
 import { referenceDonors, referenceEvents, referenceExpenseCategories, referenceExpenseLedger, referencePastAuctions, referenceSponsors, referenceSummary } from "@/lib/reference-data";
 
 type Sponsor = { id: string; name: string; tier: string; logo_url: string | null; website_url: string | null; plot_flat?: string | null; contribution_amount?: number | null };
@@ -191,7 +192,7 @@ export default async function Home() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
       <Header />
       <main className="public-homepage">
-        <CinematicHero />
+        <CinematicHero introFrames={introSequenceFrames} />
 
         <HomepagePulse
           donations={[...donorWall].sort((a, b) => new Date(b.received_at).getTime() - new Date(a.received_at).getTime())}
